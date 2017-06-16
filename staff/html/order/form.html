@@ -1,0 +1,355 @@
+<style scoped>
+	.section-border {
+		margin-top: 15px;
+		margin-bottom: 15px;
+		border: 1px solid silver;
+		border-radius: 5px;
+		padding: 15px;
+	}
+
+	.section-border .page-header {
+		margin-top: 0;
+	}
+
+</style>
+<form name="orderForm" novalidate class="form-horizontal quote-form" style="max-width: 600px; margin: 0 auto;" role="form" ng-submit="orderForm.$valid && saveOrder()">
+	<div class="text-center">
+		<h3><i class="fa fa-car"></i> {{title}}</h3>
+	</div>
+	<fieldset ng-disabled="progress">
+		<div class="section-border">
+			<div class="page-header">
+				<h4>Shipper Information</h4>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Type</label>
+				<div class="col-sm-9">
+					<label class="radio-inline"><input type="radio" ng-model="order.shipper.type" value="Individual" ng-required> Individual</label>
+					<label class="radio-inline"><input type="radio" ng-model="order.shipper.type" value="Company" ng-required> Company</label>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.shipper.type == 'Company'" ng-class="{ 'has-error': submitted && orderForm.shipperCompany.$invalid }">
+				<label class="col-sm-3 control-label">Company</label>
+				<div class="col-sm-9">
+					<input name="shipperCompany" type="text" class="form-control" ng-model="order.shipper.company" ng-required="order.shipper.type == 'Company'">
+					<span class="help-block" ng-show="submitted && orderForm.shipperCompany.$error.required">Company name is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.shipperName.$invalid }">
+				<label class="col-sm-3 control-label">Name</label>
+				<div class="col-sm-9">
+					<input name="shipperName" type="text" class="form-control" ng-model="order.shipper.name" required autofocus>
+					<span class="help-block" ng-show="submitted && orderForm.shipperName.$error.required">Full name is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.shipperEmail.$invalid }">
+				<label class="col-sm-3 control-label">Email</label>
+				<div class="col-sm-9">
+					<input name="shipperEmail" type="text" class="form-control" ng-model="order.shipper.email" required>
+					<span class="help-block" ng-show="submitted && orderForm.shipperEmail.$error.required">Email is required</span>
+					<span class="help-block" ng-show="submitted && orderForm.shipperEmail.$error.email">Invalid email address</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.shipperPhone.$invalid }">
+				<label class="col-sm-3 control-label">Phone</label>
+				<div class="col-sm-9">
+					<input name="shipperPhone" type="text" class="form-control" ng-model="order.shipper.phone" mask="(999) 999-9999" clean="true" placeholder="(###) ###-####" required>
+					<span class="help-block" ng-show="submitted && orderForm.shipperPhone.$error.required">Phone is required</span>
+				</div>
+			</div>
+		</div>
+		<div class="section-border">
+			<div class="page-header">
+				<h4 style="display: inline-block">Pickup Location &amp; Contact </h4>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Address Type</label>
+				<div class="col-sm-9">
+					<label class="radio-inline"><input type="radio" ng-model="order.pickup.addressType" value="Private" ng-required> Private</label>
+					<label class="radio-inline"><input type="radio" ng-model="order.pickup.addressType" value="Business" ng-required> Business</label>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.pickup.addressType == 'Business'" ng-class="{ 'has-error': submitted && orderForm.pickupCompany.$invalid }">
+				<label class="col-sm-3 control-label">Company</label>
+				<div class="col-sm-9">
+					<input name="pickupCompany" type="text" class="form-control" ng-model="order.pickup.company" ng-required="order.pickup.addressType == 'Business'">
+					<span class="help-block" ng-show="submitted && orderForm.pickupCompany.$error.required">Company name is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.pickupAddress.$invalid }">
+				<label class="col-sm-3 control-label">Address</label>
+				<div class="col-sm-9">
+					<input name="pickupAddress" type="text" class="form-control" ng-model="order.pickup.address" required>
+					<span class="help-block" ng-show="submitted && orderForm.pickupAddress.$error.required">Pickup address is required</span>
+				</div>
+			</div>
+			
+			<div class="form-group" ng-class="{ 'has-error': submitted && !order.pickup.location }">
+				<label class="col-sm-3 control-label">City</label>
+				<div class="col-md-9" style="margin-top: 6px;">
+					<dd-city-picker ng-model="order.pickup.location" required on-select="getRouteInfo"></dd-city-picker>
+					<span class="help-block" ng-show="submitted && !order.pickup.location">Pickup city is required</span>
+				</div>
+			</div>
+
+			<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.pickupDates.$invalid }">
+				<label class="col-sm-3 control-label">Pickup Dates</label>
+				<div class="col-sm-9">
+					<input name="pickupDates" type="text" ng-model="order.pickup.dates" class="form-control" required date-picker="datePicker" placeholder="When to sheculde pickup">
+					<span class="help-block" ng-show="submitted && orderForm.pickupDates.$error.required">1 to 5 pickup dates are required</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">From Auction</label>
+				<div class="col-sm-9">
+					<div class="checkbox">
+						<label><input type="checkbox" ng-model="order.pickup.fromAuction" value="yes"> Yes</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.pickup.fromAuction" ng-class="{ 'has-error': submitted && orderForm.pickupBuyerNumber.$invalid }">
+				<label class="col-sm-3 control-label">Buyer Number</label>
+				<div class="col-sm-9">
+					<input name="pickupBuyerNumber" type="text" class="form-control" ng-model="order.pickup.buyerNumber" ng-required="order.pickup.fromAuction">
+					<span class="help-block" ng-show="submitted && orderForm.pickupBuyerNumber.$error.required">Buyer number is required</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Contact</label>
+				<div class="col-sm-9">
+					<label class="radio-inline"><input type="radio" ng-model="order.pickup.contactType" value="Me" ng-required> Me</label>
+					<label class="radio-inline"><input type="radio" ng-model="order.pickup.contactType" value="Other" ng-required> Other</label>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.pickup.contactType == 'Other'" ng-class="{ 'has-error': submitted && orderForm.pickupName.$invalid }">
+				<label class="col-sm-3 control-label">Name</label>
+				<div class="col-sm-9">
+					<input name="pickupName" type="text" class="form-control" ng-model="order.pickup.name" ng-required="order.pickup.contactType == 'Other'">
+					<span class="help-block" ng-show="submitted && orderForm.pickupName.$error.required">Contact name is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.pickup.contactType == 'Other'" ng-class="{ 'has-error': submitted && orderForm.pickupPhone.$invalid }">
+				<label class="col-sm-3 control-label">Phone</label>
+				<div class="col-sm-9">
+					<input name="pickupPhone" type="text" class="form-control" ng-model="order.pickup.phone" mask="(999) 999-9999" clean="true" placeholder="(###) ###-####" ng-required="order.pickup.contactType == 'Other'">
+					<span class="help-block" ng-show="submitted && orderForm.pickupPhone.$error.required">Contact phone is required</span>
+				</div>
+			</div>
+		</div>
+		<div class="section-border">
+			<div class="page-header">
+				<h4>Delivery Location &amp; Contact</h4>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Address Type</label>
+				<div class="col-sm-9">
+					<label class="radio-inline"><input type="radio" ng-model="order.delivery.addressType" value="Private" ng-required> Private</label>
+					<label class="radio-inline"><input type="radio" ng-model="order.delivery.addressType" value="Business" ng-required> Business</label>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.delivery.addressType == 'Business'" ng-class="{ 'has-error': submitted && orderForm.deliveryCompany.$invalid }">
+				<label class="col-sm-3 control-label">Company</label>
+				<div class="col-sm-9">
+					<input name="deliveryCompany" type="text" class="form-control" ng-model="order.delivery.company" ng-required="order.delivery.addressType == 'Business'">
+					<span class="help-block" ng-show="submitted && orderForm.deliveryCompany.$error.required">Company name is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.deliveryAddress.$invalid }">
+				<label class="col-sm-3 control-label">Address</label>
+				<div class="col-sm-9">
+					<input name="deliveryAddress" type="text" class="form-control" ng-model="order.delivery.address" required>
+					<span class="help-block" ng-show="submitted && orderForm.deliveryAddress.$error.required">Delivery address is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && !order.delivery.location }">
+				<label class="col-sm-3 control-label">City</label>
+				<div class="col-md-9" style="margin-top: 6px;">
+					<dd-city-picker ng-model="order.delivery.location" required on-select="getRouteInfo"></dd-city-picker>
+					<span class="help-block" ng-show="submitted && !order.delivery.location">Delivery city is required</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Contact</label>
+				<div class="col-sm-9">
+					<label class="radio-inline"><input type="radio" ng-model="order.delivery.contactType" value="Me" ng-required> Me</label>
+					<label class="radio-inline"><input type="radio" ng-model="order.delivery.contactType" value="Other" ng-required> Other</label>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.delivery.contactType == 'Other'" ng-class="{ 'has-error': submitted && orderForm.deliveryName.$invalid }">
+				<label class="col-sm-3 control-label">Name</label>
+				<div class="col-sm-9">
+					<input name="deliveryName" type="text" class="form-control" ng-model="order.delivery.name" ng-required="order.delivery.contactType == 'Other'">
+					<span class="help-block" ng-show="submitted && orderForm.deliveryName.$error.required">Contact name is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-show="order.delivery.contactType == 'Other'" ng-class="{ 'has-error': submitted && orderForm.deliveryPhone.$invalid }">
+				<label class="col-sm-3 control-label">Phone</label>
+				<div class="col-sm-9">
+					<input name="deliveryPhone" type="text" class="form-control" ng-model="order.delivery.phone" mask="(999) 999-9999" clean="true" placeholder="(###) ###-####" ng-required="order.delivery.contactType == 'Other'">
+					<span class="help-block" ng-show="submitted && orderForm.deliveryPhone.$error.required">Contact phone is required</span>
+				</div>
+			</div>
+		</div>
+		<div class="section-border">
+			<h4>Vehicles Information</h4>
+			<div ng-repeat="vehicle in order.vehicles">
+				<hr>
+				<ng-form name="vehicleForm">
+					<div class="panel panel-default">
+						<div class="panel-heading">Vehicle #{{$index+1}}</div>
+						<div class="panel-body">
+							<span ng-show="vehicles.fetchingModels"><i class="fa fa-refresh fa-spin"></i></span></legend>
+
+							<div class="form-group" ng-class="{ 'has-error': submitted && !vehicle.model }">
+								<label class="col-sm-3 control-label">Make / Model:</label>
+								<div class="col-sm-9">
+									<dd-vehicle-picker ng-model="vehicle.model"></dd-vehicle-picker>
+									<span class="help-block" ng-show="submitted && !vehicle.model">Vehicle Make / Model is required</span>
+								</div>
+							</div>
+
+							<div class="form-group" ng-class="{ 'has-error': submitted && vehicleForm.year.$invalid }">
+								<label class="col-sm-3 control-label">Year</label>
+								<div class="col-sm-9">
+									<vehicle-year ng-model="vehicle.year" container="vehicles[$index]" name="year" placeholder="####" required></vehicle-year>
+									<span class="help-block" ng-show="submitted && vehicleForm.year.$error.required">Vehicle year is required</span>
+								</div>
+							</div>
+
+							<div class="form-group" ng-class="{ 'has-error': submitted && !vehicle.type }">
+								<label class="col-sm-3 control-label">Type:</label>
+								<div class="col-sm-9">
+									<dd-vehicle-type-picker ng-model="vehicle.type"></dd-vehicle-type-picker>
+									<span class="help-block" ng-show="submitted && !vehicle.type">Vehicle Type is required</span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Condition</label>
+								<div class="col-sm-9">
+									<label class="radio-inline"><input type="radio" ng-model="vehicle.condition" value="Running" ng-required> Running</label>
+									<label class="radio-inline"><input type="radio" ng-model="vehicle.condition" value="Not Running" ng-required> Not Running</label>
+								</div>
+							</div>
+							<div class="form-group" ng-class="{ 'has-error': submitted && vehicleForm.price.$invalid }">
+								<label class="col-sm-3 control-label">Price</label>
+								<div class="col-sm-9">
+									<input name="price" type="number" style="width: 25%; margin-right: 8px;" min="0" ng-model="vehicle.price" class="form-control input-sm pull-left" required placeholder="Enter Price" ng-change="updateVehicleFee($index)">
+									<button class="btn btn-default btn-sm pull-left" type="button" ng-click="calcVehiclePrice( $index )"><i class="fa fa-dollar"></i> Calculate</button>
+                                    <span ng-show="vehicle.fee && user.isAdmin()" class="help-block">&nbsp; + ${{vehicle.fee}} => <strong>${{ ddPricing.getVehiclePrice(vehicle) | number }}</strong></span>
+									<span class="help-block" ng-show="submitted && vehicleForm.price.$error.required">Price is required</span>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+							<div class="row">
+								<div class="col-md-offset-3 col-md-5">
+									<button class="btn btn-danger btn-xs" type="button" ng-click="removeVehicle( $index, this )" ng-show="order.vehicles.length > 1">
+										<i class="fa fa-times"></i> Remove vehicle
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ng-form>
+			</div>
+			<hr>
+
+			<div class="row">
+				<div class="col-sm-offset-3 col-sm-9">
+					<button type="button" class="btn btn-info" ng-click="addVehicle()"><i class="fa fa-plus"></i> Add Vehicle</button>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<div class="section-border">
+			<div class="page-header">
+				<h4>Shipment Details</h4>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Package</label>
+				<div class="col-sm-9">
+					<label class="radio-inline" style="padding-left: 0px;"><span class="fa fa-cubes"></span> <strong>{{order.package}}</strong>
+
+						<a class="nolink text-smaller text-primary" href="javascript:;" ng-click="changePackage()">  change</a>
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Carrier Type</label>
+				<div class="col-sm-9">
+					<label class="radio-inline"><input type="radio" ng-model="order.shipment.carrierType" value="Open" ng-required> Open</label>
+					<label class="radio-inline"><input type="radio" ng-model="order.shipment.carrierType" value="Enclosed" ng-required> Enclosed</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Payment Method</label>
+				<div class="col-sm-9">
+					<label class="radio-inline"><input type="radio" ng-model="order.shipment.paymentMethod" value="Cash on Delivery" ng-required> Cash on Delivery</label>
+					<label class="radio-inline"><input type="radio" ng-model="order.shipment.paymentMethod" value="Cash on Pickup" ng-required> Cash on Pickup</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Notes</label>
+				<div class="col-sm-9">
+					<textarea class="form-control" rows="3" ng-model="order.shipment.notes"></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-default" ng-show="mode == 'create'">
+			<div class="panel-heading">
+				<h3 class="panel-title"><label class="checkbox-inline"><input type="checkbox" ng-model="ccShipperAuth"> $100 Credit Card Authorization (Optional)</label></h3>
+			</div>
+			<div class="panel-body">
+				<p>
+					Direct Dispatch requires a $100 Authorization to process your order. Please note this is not
+					a broker fee. It will be released as soon as vehicle gets picked up. Please pay
+					the total amount of shipment to the carrier directly.
+				</p>
+				<div ng-show="ccShipperAuth">
+					<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.cardNumber.$invalid }">
+						<label class="col-sm-4 control-label">Card Number</label>
+						<div class="col-sm-6">
+							<input id="cardNumber" name="cardNumber" ng-required="mode == 'create' && ccShipperAuth" type="text" class="form-control input-sm" ng-model="order.creditCard.cardNumber" placeholder="13 to 16 digits number" ng-pattern="/^\d{13,16}$/">
+							<span class="help-block" ng-show="submitted && orderForm.cardNumber.$error.required">Card Number is required</span>
+							<span class="help-block" ng-show="submitted && orderForm.cardNumber.$error.pattern">Card Number invalid. Only 13 to 16 digits</span>
+						</div>
+					</div>
+					<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.expirationDate.$invalid }">
+						<label class="col-sm-4 control-label">Expiration Date</label>
+						<div class="col-sm-4">
+							<input name="expirationDate" ng-required="mode == 'create' && ccShipperAuth" type="text" mask="9999" class="form-control input-sm phone-number" ng-model="order.creditCard.expirationDate" placeholder="MMYY" ng-pattern="/^(0[1-9]|1[0-2])([1-9][0-9])$/">
+							<span class="help-block" ng-show="submitted && orderForm.expirationDate.$error.required">Expiration Date is required</span>
+							<span class="help-block" ng-show="submitted && orderForm.expirationDate.$error.pattern">Expiration Date is invalid</span>
+						</div>
+					</div>
+					<div class="form-group" ng-class="{ 'has-error': submitted && orderForm.cardCode.$invalid }">
+						<label class="col-sm-4 control-label">CVV</label>
+						<div class="col-sm-4">
+							<input name="cardCode" ng-required="mode == 'create' && ccShipperAuth" type="text" class="form-control input-sm" ng-model="order.creditCard.cardCode" placeholder="3 or 4 digit number"
+							ng-pattern="/^\d{3,4}$/">
+							<span class="help-block" ng-show="submitted && orderForm.cardCode.$error.required">CVV is required</span>
+							<span class="help-block" ng-show="submitted && orderForm.cardCode.$error.pattern">CVV Invalid. Only 3 or 4 digits</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">&nbsp;</label>
+			<div class="col-sm-9">
+				<h3 ng-if="order.vehicles" class="form-control-static">Total: <strong>${{ ddPricing.getTotalPrice(order.vehicles, order.packagePrice) | number}}</strong></h3>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button type="submit" class="btn btn-primary margin-5" ng-click="submitted = true"><i class="fa fa-save"></i> Save</button>
+				<a href="{{cancelState}}" class="btn btn-default margin-5"> Cancel</a>
+			</div>
+		</div>
+	</fieldset>
+	<div class="col-sm-offset-3 col-sm-9">
+		<div ng-show="progress"><i class="fa fa-2x fa-spinner fa-spin"></i></div>
+		<div class="alert alert-danger" ng-show="error">{{error}}</div>
+		<div class="alert alert-danger" ng-show="submitted && orderForm.$invalid">There are errors in the form, please correct and submit again</div>
+	</div>
+</form>

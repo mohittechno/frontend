@@ -1,0 +1,37 @@
+<div class="col-md-offset-3 col-md-1"></div>
+<div class="login-form col-md-4 ui-panel">
+	<form name="signinForm" class="signin-form ui-form" novalidate role="form" ng-submit="signinForm.$valid && auth()" style="margin: 0px auto;width: 85%;">
+		<div class="ui-panel-heading">
+			Staff Sign In
+		</div>
+
+		<div class="ui-panel-body">
+			<p class="text-smaller text-muted"><em>Please specify your credentials to sign in.</em></p>
+			<div style="height: 10px;"></div>			
+			<div class="alert alert-danger" ng-show="error"> <span class="fa fa-exclamation-triangle"></span> {{error}}</div>
+			<div class="form-group has-feedback" ng-class="{ 'has-error': submitted && signinForm.email.$invalid }">
+				<label class="control-label" for="email">Email Address</label>
+				<input name="email" id="email" type="email" ng-model="email" class="form-control input-md" required autofocus>
+				<span class="glyphicon glyphicon-user form-control-feedback" aria-hidden="true"></span>
+				<span class="help-block" ng-show="submitted && signinForm.email.$error.required">Email is required</span>
+				<span class="help-block" ng-show="submitted && signinForm.email.$error.email">Invalid Email</span>
+			</div>
+			<div class="form-group has-feedback" ng-class="{ 'has-error': submitted && signinForm.pass.$invalid }">
+				<label class="control-label" for="pass">Password</label>
+				<input name="pass" id="pass" type="password" ng-model="pass" class="form-control input-md" required>
+				<span class="glyphicon glyphicon-lock form-control-feedback" aria-hidden="true"></span>
+				<span class="help-block" ng-show="submitted && signinForm.pass.$error.required">Password is required</span>
+			</div>
+			<div class="row controls">
+				<div class="col-md-5 sign">
+					<button class="btn btn-primary btn-block" type="submit" ng-click="submitted = true"><span class="fa fa-sign-in"></span> Sign In</button>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<div style="height:26px;"></div>
+			<p class="text-smaller text-muted"><i class="fa fa-info-circle"></i> Can't access your account? <a class="nolink" href="reset-pass">Reset password</a>.</p>
+		</div>
+	</form>
+</div>
+<div class="clearfix"></div>
+<div class="copyright text-center">&copy; 2016 <strong><a href="http://direct-dispatch.com/">Direct Dispatch</a> Inc</strong>, All rights reserved.</div>

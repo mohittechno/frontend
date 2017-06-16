@@ -1,0 +1,67 @@
+<div style="max-width: 450px; margin: 0 auto">
+	<div class="page-header text-center">
+		<h3><i class="fa fa-user"></i> Create New Daler</h3>
+	</div>
+	<form name="dealerForm" class="form-horizontal" role="form" novalidate ng-submit="dealerForm.$valid && register()">
+		<fieldset ng-disabled="progress">
+			<div class="form-group" ng-class="{ 'has-error': submitted && dealerForm.email.$invalid }">
+				<label for="email" class="col-sm-3 control-label">Email</label>
+				<div class="col-sm-9">
+					<input name="email" id="email" type="email" class="form-control" ng-model="dealer.email" required placeholder="Email Address"
+						autofocus>
+					<span class="help-block" ng-show="submitted && dealerForm.email.$error.required">Email is required</span>
+					<span class="help-block" ng-show="submitted && dealerForm.email.$error.email">Email is invalid</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && dealerForm.name.$invalid }">
+				<label for="name" class="col-sm-3 control-label">Name</label>
+				<div class="col-sm-9">
+					<input name="name" id="name" type="text" class="form-control" ng-model="dealer.name" required ng-minlength="3" placeholder="Full Name">
+					<span class="help-block" ng-show="submitted && dealerForm.name.$error.required">Name is required</span>
+					<span class="help-block" ng-show="submitted && dealerForm.name.$error.minlength">Name is too short</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && dealerForm.company.$invalid }">
+				<label for="company" class="col-sm-3 control-label">Company</label>
+				<div class="col-sm-9">
+					<input name="company" id="company" type="text" class="form-control" ng-model="dealer.company" required ng-minlength="3" placeholder="Dealer Company">
+					<span class="help-block" ng-show="submitted && dealerForm.company.$error.required">Company is required</span>
+					<span class="help-block" ng-show="submitted && dealerForm.company.$error.minlength">Company is too short</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && dealerForm.address.$invalid }">
+				<label for="address" class="col-sm-3 control-label">Address</label>
+				<div class="col-sm-9">
+					<input name="address" id="address" type="text" class="form-control" ng-model="dealer.address" required ng-minlength="3" placeholder="Address">
+					<span class="help-block" ng-show="submitted && dealerForm.address.$error.required">Address is required</span>
+					<span class="help-block" ng-show="submitted && dealerForm.address.$error.minlength">Address is too short</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && !dealer.location }">
+				<label for="company" class="col-sm-3 control-label">City</label>
+				<div class="col-sm-9">
+					<dd-city-picker ng-model="dealer.location"></dd-city-picker>
+					<span class="help-block" ng-show="submitted && !dealer.location">City is required</span>
+				</div>
+			</div>
+			<div class="form-group" ng-class="{ 'has-error': submitted && dealerForm.phone.$invalid }">
+				<label for="phone" class="col-sm-3 control-label">Phone</label>
+				<div class="col-sm-9">
+					<input name="phone" id="phone" type="text" class="form-control" ng-model="dealer.phone" required mask="(999) 999-9999" clean="true"
+						placeholder="(###) ###-####">
+					<span class="help-block" ng-show="submitted && dealerForm.phone.$error.required">Phone is required</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-9">
+					<button class="btn btn-default btn-primary" type="submit" ng-click="submitted = true"><i class="fa fa-save"></i> Create Account</button>&nbsp;&nbsp;&nbsp;
+					<a class="btn btn-default" href="dealers"><i class="fa fa-arrow-left"></i> Back</a>
+				</div>
+			</div>
+		</fieldset>
+		<div style="text-align: center; margin: 15px 0;">
+			<div ng-show="progress"><i class="fa fa-2x fa-spinner fa-spin"></i></div>
+			<div class="alert alert-danger" ng-show="error">{{error}}</div>
+		</div>
+	</form>
+</div>

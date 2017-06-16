@@ -1,0 +1,108 @@
+<form name="leadForm" novalidate class="form-horizontal lead-form" style="max-width: 600px; margin: 0 auto;" role="form" ng-submit="leadForm.$valid && saveLead()">
+	<div class="page-header text-center">
+		<h3><i class="fa fa-user"></i> {{title}}</h3>
+	</div>
+	<fieldset ng-disabled="progress">
+		<div class="form-group" ng-class="{ 'has-error': submitted && leadForm.email.$invalid }">
+			<label class="col-sm-3 control-label">Email</label>
+			<div class="col-sm-9">
+				<input name="email" type="email" ng-model="lead.email" class="form-control" required placeholder="Email address">
+				<span class="help-block" ng-show="submitted && leadForm.email.$error.required">Email is required</span>
+				<span class="help-block" ng-show="submitted && leadForm.email.$error.email">Invalid Email</span>
+			</div>
+		</div>
+		<div class="form-group" ng-class="{ 'has-error': submitted && !lead.origin }">
+			<label class="col-sm-3 control-label">Origin</label>
+			<div class="col-md-9" style="margin-top: 6px;">
+				<dd-city-picker ng-model="lead.origin" required on-select="getRouteInfo"></dd-city-picker>
+				<span class="help-block" ng-show="submitted && !lead.origin">Origin is required</span>
+			</div>
+		</div>
+
+		<div class="form-group" ng-class="{ 'has-error': submitted && !lead.destination }">
+			<label class="col-sm-3 control-label">Destination</label>
+			<div class="col-md-9" style="margin-top: 6px;">
+				<dd-city-picker ng-model="lead.destination" required on-select="getRouteInfo"></dd-city-picker>
+				<span class="help-block" ng-show="submitted && !lead.destination">Destination is required</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Carrier Type</label>
+			<div class="col-sm-9">
+				<label class="radio-inline"><input type="radio" ng-model="lead.carrierType" value="Open" ng-required> Open</label>
+				<label class="radio-inline"><input type="radio" ng-model="lead.carrierType" value="Enclosed" ng-required> Enclosed</label>
+			</div>
+		</div>
+		<div ng-repeat="vehicle in lead.vehicles">
+			
+				<ng-form name="vehicleForm">
+					<div class="panel panel-default">
+						<div class="panel-heading">Vehicle #{{$index+1}}</div>
+						<div class="panel-body">
+							<span ng-show="vehicles.fetchingModels"><i class="fa fa-refresh fa-spin"></i></span></legend>
+
+							<div class="form-group" ng-class="{ 'has-error': submitted && !vehicle.model }">
+								<label class="col-sm-3 control-label">Make / Model:</label>
+								<div class="col-sm-9">
+									<dd-vehicle-picker ng-model="vehicle.model"></dd-vehicle-picker>
+									<span class="help-block" ng-show="submitted && !vehicle.model">Vehicle Make / Model is required</span>
+								</div>
+							</div>
+
+							<div class="form-group" ng-class="{ 'has-error': submitted && !vehicle.type }">
+								<label class="col-sm-3 control-label">Type:</label>
+								<div class="col-sm-9">
+									<dd-vehicle-type-picker ng-model="vehicle.type"></dd-vehicle-type-picker>
+									<span class="help-block" ng-show="submitted && !vehicle.type">Vehicle Type is required</span>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Condition</label>
+								<div class="col-sm-9">
+									<label class="radio-inline"><input type="radio" ng-model="vehicle.condition" value="Running" ng-required> Running</label>
+									<label class="radio-inline"><input type="radio" ng-model="vehicle.condition" value="Not Running" ng-required> Not Running</label>
+								</div>
+							</div>
+							<div class="form-group" ng-class="{ 'has-error': submitted && vehicleForm.price.$invalid }">
+								<label class="col-sm-3 control-label">Price</label>
+								<div class="col-sm-9">
+									<input name="price" type="number" style="width: 25%; margin-right: 8px;" min="0" ng-model="vehicle.price" class="form-control input-sm pull-left" required placeholder="Enter Price" ng-change="updateVehicleFee($index)">
+									<button class="btn btn-default btn-sm pull-left" type="button" ng-click="calcVehiclePrice( $index )"><i class="fa fa-dollar"></i> Calculate</button>
+                                    <span ng-show="vehicle.fee && user.isAdmin()" class="help-block">&nbsp; + ${{vehicle.fee}} => <strong>${{ ddPricing.getVehiclePrice(vehicle) | number }}</strong></span>
+									<span class="help-block" ng-show="submitted && vehicleForm.price.$error.required">Price is required</span>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+							<div class="row">
+								<div class="col-md-offset-3 col-md-5">
+									<button class="btn btn-danger btn-xs" type="button" ng-click="removeVehicle( $index, this )" ng-show="lead.vehicles.length > 1">
+										<i class="fa fa-times"></i> Remove vehicle
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</ng-form>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Total</label>
+			<div class="col-sm-9">
+				<p ng-if="lead.vehicles" class="form-control-static" style="font-size: 18px;"><strong>${{ ddPricing.getTotalPrice(lead.vehicles) | number}}</strong></p>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<button type="submit" class="btn btn-primary margin-5" ng-click="submitted = true"><i class="fa fa-save"></i> Save</button>
+				<button class="btn btn-default margin-5" type="button" ng-click="addVehicle()"><i class="fa fa-plus"></i> Add Vehicle</button>
+				<a href="{{cancelUrl}}" class="btn btn-default margin-5"><i class="fa fa-arrow-left"></i> Cancel</a>
+			</div>
+		</div>
+	</fieldset>
+	<div class="col-sm-offset-3 col-sm-9">
+		<div ng-show="progress"><i class="fa fa-2x fa-spinner fa-spin"></i></div>
+		<div class="alert alert-danger" ng-show="error">{{error}}</div>
+	</div>
+</form>
+
+

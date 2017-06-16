@@ -1,0 +1,69 @@
+<div style="max-width: 450px; margin: 0 auto">
+	<div class="page-header text-center">
+		<h3><i class="fa fa-user"></i> Create New Carrier</h3>
+	</div>
+	<form name="carrierForm" class="form-horizontal" role="form" novalidate ng-submit="carrierForm.$valid && register()">
+		<div ng-hide="success">
+			<fieldset ng-disabled="progress">
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.name.$invalid }">
+					<label for="name" class="col-sm-3 control-label">Name <span class="required">*</span></label>
+					<div class="col-sm-9">
+						<input name="name" id="name" type="text" class="form-control" ng-model="carrier.name" required ng-minlength="3" placeholder="Full Name" autofocus>
+						<span class="help-block" ng-show="submitted && carrierForm.name.$error.required">Name is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.name.$error.minlength">Name is too short</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.email.$invalid }">
+					<label for="email" class="col-sm-3 control-label">Email <span class="required">*</span></label>
+					<div class="col-sm-9">
+						<input name="email" id="email" type="email" class="form-control" ng-model="carrier.email" required placeholder="Email Address">
+						<span class="help-block" ng-show="submitted && carrierForm.email.$error.required">Email is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.email.$error.email">Email is invalid</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.phone.$invalid }">
+					<label for="phone" class="col-sm-3 control-label">Phone <span class="required">*</span></label>
+					<div class="col-sm-9">
+						<input name="phone" id="phone" type="text" class="form-control" ng-model="carrier.phone" required mask="(999) 999-9999" clean="true" placeholder="(###) ###-####">
+						<span class="help-block" ng-show="submitted && carrierForm.phone.$error.required">Phone is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.phone.$error.pattern">Phone is invalid</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.company.$invalid }">
+					<label for="company" class="col-sm-3 control-label">Company <span class="required">*</span></label>
+					<div class="col-sm-9">
+						<input name="company" id="company" type="text" class="form-control" ng-model="carrier.company" required ng-minlength="3" placeholder="Company Name">
+						<span class="help-block" ng-show="submitted && carrierForm.company.$error.required">Company is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.company.$error.minlength">Company is too short</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.mc.$invalid }">
+					<label for="mc" class="col-sm-3 control-label">MC# <span class="required">*</span></label>
+					<div class="col-sm-9">
+						<input name="mc" id="mc" type="text" class="form-control" ng-model="carrier.mc" required ng-pattern="/^\d+$/" placeholder="MC Number">
+						<span class="help-block" ng-show="submitted && carrierForm.mc.$error.required">MC# is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.mc.$error.pattern">MC# is invalid</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.dot.$invalid }">
+					<label for="dot" class="col-sm-3 control-label">DOT# <span class="required">*</span></label>
+					<div class="col-sm-9">
+						<input name="dot" id="dot" type="text" class="form-control" ng-model="carrier.dot" required ng-pattern="/^\d+$/" placeholder="DOT Number">
+						<span class="help-block" ng-show="submitted && carrierForm.dot.$error.required">DOT# is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.dot.$error.pattern">DOT# is invalid</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<button class="btn btn-default btn-primary" type="submit" ng-click="submitted = true"><i class="fa fa-save"></i> Create Account</button>&nbsp;&nbsp;&nbsp;
+						<a class="btn btn-default" href="carriers"><i class="fa fa-arrow-left"></i> Back</a>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+		<div style="text-align: center; margin: 15px 0;">
+			<div ng-show="progress"><i class="fa fa-2x fa-spinner fa-spin"></i></div>
+			<div class="alert alert-danger" ng-show="error">{{error}}</div>
+		</div>
+	</form>
+</div>

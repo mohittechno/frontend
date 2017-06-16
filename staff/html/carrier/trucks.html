@@ -1,0 +1,223 @@
+<style>
+	.popover-content {
+		margin-left: 10px;
+	}
+
+	a.chosen-single, .chosen-default { height: 26px !important; }
+
+	.form-group.has-error .chosen-single.chosen-default  { border-color: #a94442 }
+
+</style>
+<ol class="breadcrumb optimized">
+	<li><a href="dashboard">Home</a></li>
+	<li><a href="carriers">Carriers</a></li>
+	<li class="active">View Details</li>
+</ol>
+
+<div style="margin-bottom: 15px;">
+	<a class="btn btn-default" href="carriers" style="display: inline-block"><i class="fa fa-arrow-left"></i> Back</a>&nbsp;&nbsp;
+	<h3 style="display: inline-block">Carrier # {{id}}</h3>
+</div>
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="carriers/view/{{id}}"><i class="fa fa-pie-chart"></i> Overview</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/user"><i class="fa fa-user"></i> User</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/company"><i class="fa fa-copyright"></i> Company</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/docs"><i class="fa fa-file-text-o"></i> Documents</a></li>
+	<li role="presentation" class="active"><a href="carriers/view/{{id}}/trucks"><i class="fa fa-truck"></i> Trucks</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/billing"><i class="fa fa-credit-card"></i> Billing</a></li>
+</ul>
+<div class="row" style="margin-left: 0">
+	<br />
+	<div ng-show="mode == 'view'">
+		<button ng-click="showAdd()" class="btn btn-default"><i class="fa fa-plus"></i> Add Truck</button>
+		<br />
+		<br />
+		<table class="table table-bordered" ng-show="trucks.length">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Spaces</th>
+					<th>Driver Name</th>
+					<th>Driver Phone</th>
+					<th>Routes</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="truck in trucks track by $index">
+					<td><button ng-click="showEdit($index, truck)" class="btn btn-default btn-xs"><i class="fa fa-edit"></i> Edit</button>&nbsp; <button type="button" class="btn btn-default btn-xs" ng-click="deleteTruck($index)"><i class="fa fa-close"></i> Delete</button></td>
+					<td>{{truck.name}}</td>
+					<td>{{truck.type}}</td>
+					<td>{{truck.spaces}}</td>
+					<td>{{truck.driverName}}</td>
+					<td>{{truck.driverPhone | tel}}</td>
+					<td>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Origin</th>
+									<th>Destination</th>
+									<th>Reverse</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="route in truck.routes">
+									<td><location container="route.origin"></location></td>
+									<td><location container="route.destination"></location></td>
+									<td><i ng-class="{fa: true, 'fa fa-check': route.reverse }"></i>
+										
+									<i ng-class="{fa: false, 'fa fa-times': !route.reverse }"></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div ng-show="mode == 'edit' || mode == 'add'">
+		<form name="truckForm" class="form-horizontal" role="form" novalidate ng-submit="truckForm.$valid && save()" style="">
+	<h3 class="col-md-offset-0" style="margin-bottom: 20px;"><span ng-show="mode == 'add'">Add New Truck</span><span ng-show="mode == 'edit'">Edit Truck</span></h3>
+	<fieldset ng-disabled="progress">
+		<div class="form-group" ng-class="{ 'has-error': submitted && truckForm.name.$invalid }">
+			<label for="name" class="col-sm-2 control-label">Name<span class="required">*</span></label>
+			<div class="col-sm-3">
+				<input name="name" id="name" type="text" class="form-control input-sm" ng-model="truck.name" required placeholder="Truck Name" autofocus>
+				<span class="help-block" ng-show="submitted && truckForm.name.$error.required">Truck name is required</span>
+			</div>
+		</div>
+		<div class="form-group" ng-class="{ 'has-error': submitted && truckForm.type.$invalid }">
+			<label for="type" class="col-sm-2 control-label">Type<span class="required">*</span></label>
+			<div class="col-sm-4">
+				<select name="type" class="form-control input-sm" ng-required="true" ng-model="truck.type">
+					<option value="">Choose Truck Type</option>
+					<option value="Open Car Carrier">Open Car Carrier</option>
+					<option value="Enclosed Car Carrier">Enclosed Car Carrier</option>
+					<option value="Wedge Trailer">Wedge Trailer</option>
+					<option value="Flat Bed">Flat Bed</option>
+					<option value="Step Deck">Step Deck</option>
+					<option value="Low Boy">Low Boy</option>
+					<option value="Other">Other</option>
+				</select>
+				<span class="help-block" ng-show="submitted && truckForm.type.$error.required">Truck type is required</span>
+			</div>
+		</div>
+		<div class="form-group" ng-class="{ 'has-error': submitted && truckForm.spaces.$invalid }">
+			<label for="spaces" class="col-sm-2 control-label">Spaces<span class="required">*</span></label>
+			<div class="col-sm-2">
+				<input name="spaces" id="spaces" type="number" class="form-control input-sm" ng-model="truck.spaces" required placeholder="Number" min="1" max="1000">
+				<div style="margin-top: 7px;" class="help-blocks text-muted text-smaller"> <span class="fa fa-info-circle"></span> Number of spaces for vehicles</div>
+				<span class="help-block" ng-show="submitted && truckForm.spaces.$error.required">Number of spaces is required</span>
+
+			</div>
+		</div>
+		<div class="form-group" ng-class="{ 'has-error': submitted && truckForm.driverName.$invalid }">
+			<label for="driverName" class="col-sm-2 control-label">Driver Name<span class="required">*</span></label>
+			<div class="col-sm-3">
+				<input name="driverName" id="driverName" type="text" class="form-control input-sm" ng-model="truck.driverName" required placeholder="Driver Name" autofocus>
+				<span class="help-block" ng-show="submitted && truckForm.driverName.$error.required">Driver name is required</span>
+			</div>
+		</div>
+		<div class="form-group" ng-class="{ 'has-error': submitted && truckForm.driverPhone.$invalid }">
+			<label for="driverPhone" class="col-sm-2 control-label">Driver Phone<span class="required">*</span></label>
+			<div class="col-sm-2">
+				<input name="driverPhone" id="driverPhone" type="text" class="form-control input-sm" ng-model="truck.driverPhone" required mask="(999) 999-9999" clean="true" placeholder="(###) ###-####" autofocus>
+				<span class="help-block" ng-show="submitted && truckForm.driverPhone.$error.required">Driver phone is required</span>
+			</div>
+		</div>
+		<hr />
+		<h4>Routes</h4>
+		<p>Adding routes will allow you to get alerts for this truck whenever matching load will arrive</p>
+
+		<div>
+			<div ng-repeat="route in truck.routes" class="col-md-6">
+				<ng-form name="routeFrom">
+					<div class="panel panel-default">
+						<div class="panel-heading">Route {{$index + 1}}</div>
+						<div class="panel-body">
+							<div class="form-group" ng-class="{ 'has-error': submitted && (routeFrom.orgState.$error.required || routeFrom.orgCity.$error.required || routeFrom.orgZip.$error.required) }">
+								<label class="col-sm-2 control-label">Origin<span class="required">*</span></label>
+								<div class="col-md-9" style="margin-top: 6px;">
+									<div class="row">
+										<div class="col-md-9">
+											<label class="pull-left">State <span class="required">*</span></label>											
+											<state-picker container="oroutes[$index]" ng-model="route.origin.state" name="orgState" required></state-picker>
+											<span class="help-block" ng-show="submitted && routeFrom.orgState.$error.required">Origin state is required</span>
+										</div>
+										<div class="col-md-3 locale findZip">
+											<zip-finder container="oroutes[$index]" state="route.origin.state" city="route.origin.city" zip="route.origin.zip"></zip-finder>
+										</div>
+									</div>
+									<div class="row" style="margin-top:10px;">
+										<div class="col-md-7">
+											<label class="pull-left">City <span class="required">*</span></label>
+											<city-picker container="oroutes[$index]" state="route.origin.state" name="orgCity" ng-model="route.origin.city" required></city-picker>
+											<span class="help-block" ng-show="submitted && routeFrom.orgCity.$error.required">Origin city is required</span>
+										</div>
+										<div class="col-md-5">
+											<label class="pull-left">Zip <span class="required">*</span></label>											
+											<zip-picker container="oroutes[$index]" ng-model="route.origin.zip" name="orgZip" required></zip-picker>
+											<span class="help-block" ng-show="submitted && routeFrom.orgZip.$error.required">Origin zip is required</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+							<div class="form-group" ng-class="{ 'has-error': submitted && (routeFrom.desState.$error.required || routeFrom.desCity.$error.required || routeFrom.desZip.$error.required) }">
+								<label class="col-sm-2 control-label">Destination<span class="required">*</span></label>
+								<div class="col-md-9" style="margin-top: 6px;">
+									<div class="row">
+										<div class="col-md-9">
+											<label class="pull-left">State <span class="required">*</span></label>											
+											<state-picker container="droutes[$index]" ng-model="route.destination.state" name="desState" required></state-picker>
+											<span class="help-block" ng-show="submitted && routeFrom.desState.$error.required">Destination state is required</span>
+										</div>
+										<div class="col-md-3 locale findZip">
+											<zip-finder container="droutes[$index]" state="route.destination.state" city="route.destination.city" zip="route.destination.zip"></zip-finder>
+										</div>
+									</div>
+									<div class="row" style="margin-top:10px;">
+										<div class="col-md-7">
+											<label class="pull-left">City <span class="required">*</span></label>
+											<city-picker container="droutes[$index]" state="route.destination.state" name="desCity" ng-model="route.destination.city" required></city-picker>
+											<span class="help-block" ng-show="submitted && routeFrom.desCity.$error.required">Destination city is required</span>
+										</div>
+										<div class="col-md-5">
+											<label class="pull-left">Zip <span class="required">*</span></label>											
+											<zip-picker container="droutes[$index]" ng-model="route.destination.zip" name="desZip" required></zip-picker>
+											<span class="help-block" ng-show="submitted && routeFrom.desZip.$error.required">Destination zip is required</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+							<div class=" col-md-offset-2 col-md-3" style="padding-left: 6px;">
+								<label style="font-weight: normal"><input type="checkbox" ng-model="route.reverse"> It's Reverse?</label>
+							</div>
+							<div class="col-md-6 text-right">
+								<button ng-show="truck.routes.length > 1" class="btn btn-danger btn-xs" ng-click="removeRoute($index)"><i class="fa fa-close"></i> Remove</button>
+							</div>
+						</div>
+					</div>
+				</ng-form>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+			<div class="clearfix"></div>
+		<div class="form-group col-md-10 col-sm-offset-2">
+			<div class="">
+				<button class="btn btn-default" type="button" ng-click="mode='view'" ><i class="fa fa-arrow-circle-left"></i> Back</button>&nbsp;&nbsp;&nbsp;
+				<button class="btn btn-default" type="button" ng-click="addRoute()"><i class="fa fa-plus"></i> Add Route</button>&nbsp;&nbsp;&nbsp;
+				<button class="btn btn-default" type="submit" ng-click="submitted = true"><i class="fa fa-save"></i> Save</button>
+			</div>
+		</div>
+			<div class="clearfix"></div>
+	</fieldset>
+	<div class="alert alert-danger" ng-show="error">{{error}}</div>
+	<div ng-show="progress"><i class="fa fa-2x fa-spinner fa-spin"></i></div>
+</form>
+	</div>
+</div>

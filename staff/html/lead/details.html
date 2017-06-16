@@ -1,0 +1,152 @@
+<style scoped>
+  .notes {
+    margin-top: 25px;
+    margin-bottom: 25px;
+  }
+  .notes table {
+    margin-top: 10px;
+  }
+  .top-15 {
+    margin-top: 15px;
+  }
+</style>
+<div class="row">
+  <h3 style="margin-left: 15px;">Lead # {{lead._id}}</h3>
+  <div class="col-md-6 vertical-padding">
+    <table class="table table-bordered">
+      <tr>
+        <td><strong>Created On</strong></td>
+        <td>{{lead.created | date:'yyyy-MM-dd hh:mm a' }}</td>
+      </tr>
+      <tr ng-show="lead.name">
+        <td><strong>Name</strong></td>
+        <td>{{lead.name}}</td>
+      </tr>
+      <tr ng-show="lead.phone">
+        <td><strong>Phone</strong></td>
+        <td>{{lead.phone | tel }}</td>
+      </tr>
+      <tr>
+        <td><strong>Email</strong></td>
+        <td>{{lead.email}}</td>
+      </tr>
+      <tr>
+        <td><strong>Origin</strong></td>
+        <td><location container="lead.origin"></location></td>
+      </tr>
+      <tr>
+        <td><strong>Destination</strong></td>
+        <td><location container="lead.destination"></location></td>
+      </tr>
+      <tr>
+        <td><strong>Distance</strong></td>
+        <td>{{lead.distance | number}} miles</td>
+      </tr>
+      <tr>
+        <td><strong>Carrier Type</strong></td>
+        <td>{{lead.carrierType}}</td>
+      </tr>
+      <tr>
+        <td><strong>Source</strong></td>
+        <td>{{lead.source || "direct-dispatch.com" }}</td>
+      </tr>
+      <tr ng-if="lead.marketing && (lead.marketing.sid || lead.marketing.cid)">
+        <td><strong>Marketing Meta</strong></td>
+        <td>Source ID = {{lead.marketing.sid}}, Campaign ID = {{lead.marketing.cid}}</td>
+      </tr>
+    </table>
+    <h3>Vehicles</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Make/Model</th>
+          <th>Type</th>
+          <th>Condition</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="vehicle in lead.vehicles">
+          <td>{{$index+1}}</td>
+          <td>{{vehicle.make}} {{vehicle.model}} {{vehicle.year}}</td>
+          <td>{{vehicle.type}}</td>
+          <td>{{vehicle.condition}}</td>
+          <td><span ng-show="ddPricing.getVehiclePrice(vehicle)">${{ ddPricing.getVehiclePrice(vehicle) | number }}</span><span ng-hide="ddPricing.getVehiclePrice(vehicle)">N/A</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 ng-if="lead">Total: ${{ ddPricing.getTotalPrice(lead.vehicles) | number}}</h3>
+  </div>
+  <div class="col-md-6 vertical-padding">
+    <div>
+      <img class="img-responsive img-thumbnail" ng-src="{{lead.mapUrl}}">
+    </div>
+  </div>
+</div>
+<div class="row" style="margin-left: 0px;">
+  <a class="btn btn-default margin-5" href="leads/{{page_no}}"><i class="fa fa-arrow-left"></i> Back</a>
+  <a href="leads/edit/{{lead._id}}" class="btn btn-default margin-5"><i class="fa fa-edit"></i> Edit</a>
+  <button class="btn btn-default margin-5" ng-click="emailQuote()"><i class="fa fa-envelope-o"></i> Email Quote</button>
+  <button ng-show="user.type == 'salesrep' && user.subtype == 'staff' && !lead.salesrepHold" class="btn btn-default margin-5" ng-click="hold()" title="Hold this lead for next 4 days"><i class="fa fa-lock"></i> Hold</button>
+  <button ng-show="user.type == 'salesrep' && user.subtype == 'staff' && lead.salesrepHold" class="btn btn-default margin-5" ng-click="release()" title="Release the lead"><i class="fa fa-unlock"></i> Release</button>
+  <!-- <span class="dropdown" class="margin-5">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+      <i class="fa fa-envelope-o"></i> Email
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="emailQuote()">Quote</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Left a message</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Followup</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+    </ul>
+  </span> -->
+  <a class="btn btn-default margin-5" ng-click="convertToOrder()" href="javascript:;"><i class="fa fa-arrow-circle-right"></i> Convert to Order</a>
+  <button class="btn btn-default margin-5" type="button" ng-click="deleteLead()"><i class="fa fa-times"></i> Delete</button>
+</div>
+<div class="row" ng-show="progress">
+  <i class="fa fa-2x fa-spinner fa-spin"></i>
+</div>
+<div class="row" ng-show="success">
+  <div class="alert alert-success">{{success}}</div>
+</div>
+<div class="row" ng-show="error">
+  <div class="alert alert-danger">{{error}}</div>
+</div>
+<div class="notes">
+  <h4>Internal Notes</h4>
+  <form role="form" ng-submit="addNote()">
+    <textarea class="form-control" ng-model="noteText" required></textarea>
+    <div class="top-15">
+      <button type="submit" class="btn btn-primary">Add Note</button>
+    </div>
+  </form>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Created</th>
+        <th>Contents</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="note in lead.notes | orderBy:'created':'true'">
+        <td>{{note.created | date:'yyyy-MM-dd hh:mm a'}}</td>
+        <td>{{note.contents}}</td>
+        <td>
+          <span ng-hide="delete">
+            <button class="btn btn-default btn-xs" ng-click=""><i class="fa fa-edit"></i> Edit</button>&nbsp;
+            <button class="btn btn-default btn-xs" ng-click="delete=true"><i class="fa fa-times"></i> Delete</button>
+          </span>
+          <span ng-show="delete">
+            Delete? 
+            <button class="btn btn-danger btn-xs" ng-click="deleteNote(note)">Yes</button>&nbsp;
+            <button class="btn btn-default btn-xs" ng-click="delete=false">No</button>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

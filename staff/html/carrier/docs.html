@@ -1,0 +1,72 @@
+<ol class="breadcrumb optimized">
+	<li><a href="dashboard">Home</a></li>
+	<li><a href="carriers">Carriers</a></li>
+	<li class="active">View Details</li>
+</ol>
+
+<div style="margin-bottom: 15px;">
+	<a class="btn btn-default" href="carriers" style="display: inline-block"><i class="fa fa-arrow-left"></i> Back</a>&nbsp;&nbsp;
+	<h3 style="display: inline-block">Carrier # {{id}}</h3>
+</div>
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="carriers/view/{{id}}"><i class="fa fa-pie-chart"></i> Overview</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/user"><i class="fa fa-user"></i> User</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/company"><i class="fa fa-copyright"></i> Company</a></li>
+	<li role="presentation" class="active"><a href="carriers/view/{{id}}/docs"><i class="fa fa-file-text-o"></i> Documents</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/trucks"><i class="fa fa-truck"></i> Trucks</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/billing"><i class="fa fa-credit-card"></i> Billing</a></li>
+</ul>
+<div class="row" style="margin: 0">
+	<br />
+	<table class="table table-bordered">
+		<tr ng-repeat="doc in ['insurance', 'mc', 'dot']">
+			<td><strong>{{getDocLabel(doc)}}</strong></td>
+			<td>
+				<span ng-show="docs[doc]"><i class="fa fa-check"></i>&nbsp;&nbsp;&nbsp;<button class="btn btn-default btn-xs" ng-click="viewDoc(doc)">View</button>&nbsp;&nbsp;&nbsp;<button class="btn btn-default btn-xs" ng-click="showUpload(doc)">Change</button>&nbsp;&nbsp;&nbsp;<button class="btn btn-default btn-xs" ng-click="deleteDoc(doc)">Delete</button>&nbsp;&nbsp;&nbsp;</span>
+				<span ng-hide="docs[doc]"><i class="fa fa-close"></i>&nbsp;&nbsp;&nbsp;<button class="btn btn-default btn-xs" ng-click="showUpload(doc)">Upload</button></span>
+			</td>
+		</tr>
+	</table>
+	<div class="alert alert-success alert-dismissible" ng-show="responseMsg" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		{{responseMsg}}
+	</div>
+	<div class="modal fade" id="uploadDialog" tabindex="-1" role="dialog" aria-labelledby="uploadDialogLabel">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title" id="uploadDialogLabel">Upload {{modal.title}} Document</h4>
+				</div>
+				<div class="modal-body">
+					<form id="docForm" ng-submit="uploadDocument()">
+						<p>Please select the document in PDF format</p>
+						<input type="file" id="docFile" accept="application/pdf" required>
+						<br>
+						<button type="submit" class="btn btn-primary">Upload</button>&nbsp;&nbsp;&nbsp;
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					</form>
+					<br>
+					<div class="progress" ng-show="modal.progress">
+						<div class="progress-bar" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%;">
+						</div>
+					</div>
+					<div class="alert alert-danger" ng-show="modal.error">{{modal.error}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="viewDocDialog" tabindex="-1" role="dialog" aria-labelledby="viewDocDialogLabel">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title" id="viewDocDialogLabel">{{modal.title}} Document</h4>
+				</div>
+				<div class="modal-body">
+					<iframe id="docViewer" style="width: 868px; height: 600px;"></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

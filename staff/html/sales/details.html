@@ -1,0 +1,61 @@
+<div class="fluid-container">
+  <h3>Sales Rep # {{salesrep._id}}</h3>
+  <ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="salesreps/view/{{salesrep._id}}">Details</a></li>
+    <li role="presentation"><a href="salesreps/bonus/{{salesrep._id}}">Bonus Points</a></li>
+  </ul>
+  <br>
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table table-bordered">
+        <tr>
+          <td><strong>Created On</strong></td>
+          <td>{{salesrep.created | date:'yyyy-MM-dd hh:mm a' }}</td>
+        </tr>
+        <tr>
+          <td><strong>Type</strong></td>
+          <td>{{salesrep.subtype | propercase }}</td>
+        </tr>
+        <tr>
+          <td><strong>Name</strong></td>
+          <td>{{salesrep.name | propercase}}</td>
+        </tr>
+        <tr>
+          <td><strong>Email</strong></td>
+          <td>{{salesrep.email | lowercase}}</td>
+        </tr>
+        <tr>
+          <td><strong>Phone</strong></td>
+          <td>{{salesrep.phone}}</td>
+        </tr>
+        <tr>
+          <td><strong>Slots</strong></td>
+          <td>{{salesrep.slots}}</td>
+        </tr>
+        <tr>
+          <td><strong>Enabled</strong></td>
+          <td><span ng-show="salesrep.enabled"><i class="fa fa-check"></i></span><span ng-hide="salesrep.enabled"><i class="fa fa-close"></i></span></td>
+        </tr>
+        <tr>
+          <td><strong>Last Login</strong></td>
+          <td><span ng-show="salesrep.lastLogin">{{salesrep.lastLogin| date:'yyyy-MM-dd hh:mm a'}}</span><span ng-hide="salesrep.lastLogin">N/A</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <a class="btn btn-default margin-5" href="salesreps/{{pageNo}}"><i class="fa fa-arrow-left"></i> Back</a>
+      <a href="salesreps/edit/{{salesrep._id}}" class="btn btn-default margin-5"><i class="fa fa-edit"></i> Edit</a>
+      <button class="btn btn-default margin-5" type="button" ng-click="delete()"><i class="fa fa-times"></i> Delete</button>
+
+      <div ng-show="progress"><i class="fa fa-2x fa-spinner fa-spin"></i></div>
+      <div ng-show="error" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>        {{error}}
+      </div>
+      <div ng-show="success" class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>        {{success}}
+      </div>
+    </div>
+  </div>
+</div>

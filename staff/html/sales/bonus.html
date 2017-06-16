@@ -1,0 +1,225 @@
+<div class="fluid-container">
+  <div ng-if="user.isRole('admin')">
+    <h3>Sales Rep # {{_id}}</h3>
+    <ul class="nav nav-tabs">
+      <li role="presentation"><a href="salesreps/view/{{_id}}">Details</a></li>
+      <li role="presentation" class="active"><a href="salesreps/view/{{_id}}/bonus">Bonus Points</a></li>
+    </ul>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-6">
+      <form role="form" class="form-inline">
+        <div class="form-group">
+          <label for="monthSelector">Month</label>&nbsp;&nbsp;
+          <select id="monthSelector" class="form-control input-sm" ng-model="date" ng-options="month as month.label for month in months"
+            ng-change="getBonus()"></select>
+        </div>
+      </form>
+      <div ng-show="progress"><i class="fa fa-1x fa-spinner fa-spin"></i></div>
+      <div ng-show="error" class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>        {{error}}
+      </div>
+      <br>
+      <div ng-hide="progress || error">
+        <div ng-show="bonus['order-booking']">
+          <h4>Order Bookings</h4>
+          <table class="table table-bordered">
+            <tr>
+              <td><strong>Type</strong></td>
+              <td><strong>Quantity</strong></td>
+              <td><strong>Points</strong></td>
+            </tr>
+            <tr ng-show="bonus['order-booking']['<= 24h']">
+              <td>Within 24 hours</td>
+              <td>{{bonus['order-booking']['<= 24h'].quantity}}</td>
+            <td>{{bonus['order-booking']['<= 24h'].points}}</td>
+          </tr>
+          <tr ng-show="bonus['order-booking']['<= 48h']">
+            <td>Within 48 hours</td>
+            <td>{{bonus['order-booking']['<= 48h'].quantity}}</td>
+            <td>{{bonus['order-booking']['<= 48h'].points}}</td>
+          </tr>
+          <tr ng-show="bonus['order-booking']['<= 7d']">
+            <td>Within 7 days</td>
+            <td>{{bonus['order-booking']['<= 7d'].quantity}}</td>
+            <td>{{bonus['order-booking']['<= 7d'].points}}</td>
+          </tr>
+          <tr ng-show="bonus['order-booking']['> 7d']">
+              <td>After 7 days</td>
+              <td>{{bonus['order-booking']['> 7d'].quantity}}</td>
+              <td>{{bonus['order-booking']['> 7d'].points}}</td>
+          </tr>
+          <tr>
+              <td><strong>Total</strong></td>
+              <td>{{bonus['order-booking'].totalQuantity}}</td>
+              <td>{{bonus['order-booking'].totalPoints}}</td>
+            </tr>
+          </table>
+        </div>
+        <div ng-show="bonus['order-dispatch']">
+          <h4>Order Dispatches</h4>
+          <table class="table table-bordered">
+            <tr>
+              <td><strong>Type</strong></td>
+              <td><strong>Quantity</strong></td>
+              <td><strong>Points</strong></td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch']['<= 24h']">
+              <td>Within 24 hours</td>
+              <td>{{bonus['order-dispatch']['<= 24h'].quantity}}</td>
+              <td>{{bonus['order-dispatch']['<= 24h'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch']['<= 48h']">
+              <td>Within 48 hours</td>
+              <td>{{bonus['order-dispatch']['<= 48h'].quantity}}</td>
+              <td>{{bonus['order-dispatch']['<= 48h'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch']['<= 7d']">
+              <td>Within 7 days</td>
+              <td>{{bonus['order-dispatch']['<= 7d'].quantity}}</td>
+              <td>{{bonus['order-dispatch']['<= 7d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch']['> 7d']">
+              <td>After 7 days</td>
+              <td>{{bonus['order-dispatch']['> 7d'].quantity}}</td>
+              <td>{{bonus['order-dispatch']['> 7d'].points}}</td>
+            </tr>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td>{{bonus['order-dispatch'].totalQuantity}}</td>
+              <td>{{bonus['order-dispatch'].totalPoints}}</td>
+            </tr>
+          </table>
+        </div>
+        <div ng-show="bonus['order-dispatch-price']">
+          <h4>Order Dispatch Prices</h4>
+          <table class="table table-bordered">
+            <tr>
+              <td><strong>Type</strong></td>
+              <td><strong>Quantity</strong></td>
+              <td><strong>Points</strong></td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch-price']['> 1000']">
+              <td>Greater than $1000</td>
+              <td>{{bonus['order-dispatch-price']['> 1000'].quantity}}</td>
+              <td>{{bonus['order-dispatch-price']['> 1000'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch-price']['> 1500']">
+              <td>Greater than $1500</td>
+              <td>{{bonus['order-dispatch-price']['> 1500'].quantity}}</td>
+              <td>{{bonus['order-dispatch-price']['> 1500'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch-price']['> 2500']">
+              <td>Greater than $2500</td>
+              <td>{{bonus['order-dispatch-price']['> 2500'].quantity}}</td>
+              <td>{{bonus['order-dispatch-price']['> 2500'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['order-dispatch-price']['> 5000']">
+              <td>Greater than $5000</td>
+              <td>{{bonus['order-dispatch-price']['> 5000'].quantity}}</td>
+              <td>{{bonus['order-dispatch-price']['> 5000'].points}}</td>
+            </tr>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td>{{bonus['order-dispatch-price'].totalQuantity}}</td>
+              <td>{{bonus['order-dispatch-price'].totalPoints}}</td>
+            </tr>
+          </table>
+        </div>
+        <div ng-show="bonus['dealer-order']">
+          <h4>Dealer Orders</h4>
+          <table class="table table-bordered">
+            <tr>
+              <td><strong>Type</strong></td>
+              <td><strong>Quantity</strong></td>
+              <td><strong>Points</strong></td>
+            </tr>
+            <tr ng-show="bonus['dealer-order']['<= 24h']">
+              <td>Within 24 hours of activation</td>
+              <td>{{bonus['dealer-order']['<= 24h'].quantity}}</td>
+              <td>{{bonus['dealer-order']['<= 24h'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order']['<= 7d']">
+              <td>Within 7 days of activation</td>
+              <td>{{bonus['dealer-order']['<= 7d'].quantity}}</td>
+              <td>{{bonus['dealer-order']['<= 7d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order']['<= 60d']">
+              <td>Within 60 days of activation</td>
+              <td>{{bonus['dealer-order']['<= 60d'].quantity}}</td>
+              <td>{{bonus['dealer-order']['<= 60d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order']['<= 180d']">
+              <td>Within 180 days of activation</td>
+              <td>{{bonus['dealer-order']['<= 180d'].quantity}}</td>
+              <td>{{bonus['dealer-order']['<= 180d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order']['<= 365d']">
+              <td>Within 365 days of activation</td>
+              <td>{{bonus['dealer-order']['<= 365d'].quantity}}</td>
+              <td>{{bonus['dealer-order']['<= 365d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order']['> 365d']">
+              <td>After 365 days of activation</td>
+              <td>{{bonus['dealer-order']['> 365d'].quantity}}</td>
+              <td>{{bonus['dealer-order']['> 365d'].points}}</td>
+            </tr>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td>{{bonus['dealer-order'].totalQuantity}}</td>
+              <td>{{bonus['dealer-order'].totalPoints}}</td>
+            </tr>
+          </table>
+        </div>
+        <div ng-show="bonus['dealer-order-dispatch']">
+          <h4>Dealer Order Dispatches</h4>
+          <table class="table table-bordered">
+            <tr>
+              <td><strong>Type</strong></td>
+              <td><strong>Quantity</strong></td>
+              <td><strong>Points</strong></td>
+            </tr>
+            <tr ng-show="bonus['dealer-order-dispatch']['<= 30d']">
+              <td>Within 30 days</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 30d'].quantity}}</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 30d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order-dispatch']['<= 90d']">
+              <td>Within 90 days</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 90d'].quantity}}</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 90d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order-dispatch']['<= 180d']">
+              <td>Within 180 days</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 180d'].quantity}}</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 180d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order-dispatch']['<= 365d']">
+              <td>Within 365 days</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 365d'].quantity}}</td>
+              <td>{{bonus['dealer-order-dispatch']['<= 365d'].points}}</td>
+            </tr>
+            <tr ng-show="bonus['dealer-order-dispatch']['> 365d']">
+              <td>After 365 days</td>
+              <td>{{bonus['dealer-order-dispatch']['> 365d'].quantity}}</td>
+              <td>{{bonus['dealer-order-dispatch']['> 365d'].points}}</td>
+            </tr>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td>{{bonus['dealer-order-dispatch'].totalQuantity}}</td>
+              <td>{{bonus['dealer-order-dispatch'].totalPoints}}</td>
+            </tr>
+          </table>
+        </div>
+        <h4><strong>Total Points: {{bonus.totalPoints | number }} &nbsp;&nbsp;&nbsp;&nbsp;<span ng-hide="true">Total Bonus: ${{bonus.totalBonus | number}}</span></strong></h4>
+        <br>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+
+    </div>
+  </div>
+</div>

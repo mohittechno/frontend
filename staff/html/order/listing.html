@@ -1,0 +1,262 @@
+<div class="tab-inner-space">
+
+    <h3>Manage Orders</h3>
+    <br>
+    <div class="table-responsive data-table">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row top-info-panel">
+                    <form class="form-inline pagination-search">
+                        <div class="col-md-8">
+                            <div>
+                                <div class="pull-left" style="margin-right: 5px;"><a ng-show="user.isAdmin()" class="btn btn-primary btn-sm" href="orders/create"><i class="fa fa-plus-square"></i>&nbsp; Create</a></div>
+                                <div class="input-group input-group-sm pull-left">
+                                    <span class="input-group-btn search-items">
+										<select ng-model="pagination.searchBy" id="page-searchBy" class="btn btn-default query-attrs" aria-describedby="sizing-addon2">
+											<option value="_id">#</option>
+											<option value="shipper.name">Name</option>
+											<option value="shipper.email">Email</option>
+											<option value="shipper.phone">Phone</option>
+											<option value="pickup.dates">Pickup</option>
+											<option value="pickup.city">Origin</option>
+											<option value="delivery.city">Destination</option>
+											<option value="Source">Source</option>
+											<option value="created">Placed on</option>
+											<option value="status">Status</option>
+										</select>
+									</span>
+                                    <input type="text" ng-enter="pagination.doSearch()" title="Press Enter key to Search" class="form-control input-group-btn"
+                                    ng-change="pagination.inputResetSearch()" ng-model="pagination.searchQuery" placeholder="Type keyword here..."
+                                    aria-describedby="sizing-addon1">
+                                    <span class="input-group-btn search-items">
+										<button type="button" class="btn btn-success" ng-click="pagination.doSearch()"><i class="fa fa-search"></i> Search</button>
+									</span>
+                                </div>
+                                <div class="pull-left alert alert-warning pagination-clear-search" ng-show="pagination.isSearched()">
+                                    <span class="fa fa-info-circle"></span> Clear search by <a href="javascript:;" ng-click="pagination.resetSearch()">clicking here</a>.
+                                </div>
+                                <div class="pull-left pagination-loader" ng-show="pagination.loading">
+                                    <span><i class="fa fa-refresh fa-spin"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-md-4 pagination-info">
+                        <div class="pull-right">
+                            <select ng-change="pagination.onChange()" ng-model="pagination.limit" ng-options="size for size in pagination.pageSizeList"
+                            id="pagination-limit" class="form-control input-sm item-per-page">
+                            </select>
+                        </div>
+                        <div class="pull-right pagination-top">
+                            <pagination total-items="pagination.total" ng-model="pagination.currentPage" max-size="0" ng-change="pagination.onPageChange()"
+                            items-per-page="pagination.limit" class="pagination-sm" boundary-links="false" first-text="&laquo;"
+                            last-text="&raquo;" previous-text="&#8249; Prev" next-text="Next &#8250;" rotate="false"></pagination>
+                        </div>
+                        <div class="pull-right">{{pagination.getInfo()}}</div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="table-responsive" ng-show="pagination.hasCount()">
+                    <table class="table table-bordered table-striped table-hover listing-table">
+                        <thead>
+                            <tr>
+                                <th class="sort-attribute text-center" ng-class="{'sort-highlight':pagination.hasSortBy( '_id' )}"><a href="javascript:;" ng-click="pagination.sortByAttr( $event, '_id' )">#</a>
+                                    <i ng-show="pagination.hasSortBy( '_id' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                </th>
+
+                                <th class="sort-attribute">
+                                    <div class="pull-left" ng-class="{'sort-highlight':pagination.hasSortBy( 'shipper.name' )}" style="padding:8px">
+                                        <i class="fa fa-user"></i>&nbsp; <a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'shipper.name' )">Name</a>
+                                        <i ng-show="pagination.hasSortBy( 'shipper.name' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                    </div>
+
+                                    <div class="pull-left" ng-class="{'sort-highlight':pagination.hasSortBy( 'shipper.email' )}" style="padding:8px">
+                                        <i class="fa fa-envelope-o"></i>&nbsp;<a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'shipper.email' )">Email</a>
+                                        <i ng-show="pagination.hasSortBy( 'shipper.email' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                    </div>
+
+                                    <div class="pull-left" ng-class="{'sort-highlight':pagination.hasSortBy( 'shipper.phone' )}" style="padding:8px">
+                                        <i class="fa fa-phone"></i>&nbsp;<a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'shipper.phone' )">Phone</a>
+                                        <i ng-show="pagination.hasSortBy( 'shipper.phone' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                    </div>
+                                </th>
+                                <th class="sort-attribute">
+                                    <div class="pull-left" ng-class="{'sort-highlight':pagination.hasSortBy( 'pickup.dates' )}" style="padding:8px">
+                                        <i class="fa fa-calendar"></i>&nbsp;<a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'pickup.dates' )">Pickup</a>
+                                        <i ng-show="pagination.hasSortBy( 'pickup.dates' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                    </div>
+                                    <div class="pull-left" ng-class="{'sort-highlight':pagination.hasSortBy( 'pickup.city' )}" style="padding:8px">
+                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;<a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'pickup.city' )">Origin</a>
+                                        <i ng-show="pagination.hasSortBy( 'pickup.city' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                    </div>
+                                    <div class="pull-left" ng-class="{'sort-highlight':pagination.hasSortBy( 'delivery.city' )}" style="padding:8px">
+                                        <i class="fa fa-arrow-circle-down"></i>&nbsp;<a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'delivery.city' )">Destination</a>
+                                        <i ng-show="pagination.hasSortBy( 'delivery.city' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                    </div>
+                                </th>
+
+                                <th><i class="fa fa-car"></i>&nbsp;Vehicles</th>
+                                <th><i class="fa fa-dollar"></i>&nbsp;Price</th>
+
+                                <th class="sort-attribute text-center" ng-class="{'sort-highlight':pagination.hasSortBy( 'created' )}"> <span class="glyphicon glyphicon-time"></span> <a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'created' )">Placed on</a>
+                                    <i ng-show="pagination.hasSortBy( 'created' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                </th>
+                                <th class="sort-attribute text-center" ng-class="{'sort-highlight':pagination.hasSortBy( 'salesrepName' )}">
+                                    <i class="fa fa-info-circle"></i>&nbsp;<a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'status' )">Status</a>
+                                    <i ng-show="pagination.hasSortBy( 'status' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+                                </th>
+                                <th> <span class="fa fa-puzzle-piece"></span> Info</th>
+                                <th ng-show="user.isRole( ['admin', 'salesrep'] )">&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             <tr ng-repeat="order in orders" ng-class="{ warning: order.selected, success: order.dealerId }">
+                                <td class="text-center">
+                                    <div ng-show="user.isAdmin()">
+                                        <input type="checkbox" ng-model="order.selected" ng-change="toggleAssign( this )" class="checkorder">
+                                    </div>
+                                    <a href="orders/view/{{order._id}}/{{pageNo}}" ng-click="save()">{{order._id}}</a>
+                                </td>
+                                <td>
+                                    <ul class="list-unstyled">
+                                        <li><i class="fa fa-user text-muted"></i>&nbsp;{{order.shipper.name| propercase}}</li>
+                                        <li><i class="fa fa-envelope-o text-muted"></i>&nbsp;<a href="mailto:{{order.shipper.email| lowercase}}">{{order.shipper.email| lowercase}}</a></li>
+                                        <li><i class="fa fa-phone text-muted"></i>&nbsp;<a href="tel:{{order.shipper.phone| propercase}}">{{order.shipper.phone| propercase}}</a></li>
+                                    </ul>
+                                </td>
+                                <td>
+
+                                    <span style="display:inline-block; margin-bottom: 10px;" ng-repeat="date in order.pickup.dates.split(', ')">
+										<span class="badge datepass today" title="Today" ng-show="iDate.isToday(date)">
+                                            <i class="fa fa-calendar-o"></i> {{ date | date:"MMM d, yyyy" }}
+                                        </span>
+                                        <span class="datepass" title="{{ order.status === 'Pending' ? 'Date Passed' : '' }}" ng-show="iDate.isPast(date)" ng-class="{'past':order.status === 'Pending'}">
+                                            <span ng-show="order.status === 'Pending'" class="fa fa-warning"></span>
+                                            <span ng-show="order.status !== 'Pending'" class="fa fa-calendar text-muted"></span> {{ date | date:"MMM d, yyyy" }}
+                                        </span>
+                                        <span class="datepass future" ng-show="iDate.isFuture(date)">
+                                            <span class="fa fa-calendar text-greenish"></span> {{ date | date:"MMM d, yyyy" }}
+                                        </span>
+                                        &nbsp;
+                                    </span>
+                                    <ul class="list-unstyled">
+                                        <li title="Origin"><i class="fa fa-arrow-circle-right"></i>&nbsp;
+                                            <location container="order.pickup.location"></location>
+                                        </li>
+                                        <li title="Destination"><i class="fa fa-arrow-circle-down"></i>&nbsp;
+                                            <location container="order.delivery.location"></location>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul class="list-unstyled">
+                                        <li ng-repeat="vehicle in order.vehicles | filter:search | orderBy:'vehicle.model':true">
+                                            <vehicle data="vehicle"></vehicle>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <span class="text-danger" ng-show="ddPricing.getTotalPrice(order.vehicles)">${{ddPricing.getTotalPrice(order.vehicles, order.packagePrice)| number}}</span>
+                                    <div class="text-warning" ng-hide="ddPricing.getTotalPrice(order.vehicles)"> <span class="fa fa-question-circle text-highlight"></span></div>
+                                </td>
+                                <td>
+                                    <span uib-tooltip="{{order.created | date:'MMM d, yyyy h:mm a'}}">{{order.fromNow}}</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="status status-{{order.status}}">{{order.status}}</span>
+
+                                </td>
+                                <td class="text-center">
+                                    <span ng-show="user.isAdmin()" tooltip-placement="top" uib-tooltip="{{order.salesrepName ? order.salesrepName : 'Unassigned'}}"><i class="fa fa-user-md" ng-class="{'text-muted':!order.salesrepName, 'text-greenish':order.salesrepName}" ></i></span>
+                                    <span tooltip-placement="top" uib-tooltip="{{order.source ? order.source : 'direct-dispatch.com'}}" ng-class="{'text-greenish':order.source, 'text-muted':!order.source}"
+                                    class="fa fa-sitemap"></span>
+                                    <span tooltip-placement="top" uib-tooltip="{{order.package}} Package" class="fa fa-cubes"></span>
+                                </td>
+                                <td class="text-center pagination-crud-icons" ng-show="user.isRole( ['admin', 'salesrep'] )">
+                                    <a href="orders/view/{{order._id}}/{{pageNo}}" title="View Details"><span class="glyphicon glyphicon-search"></span></a>
+                                    <a href="orders/edit/{{order._id}}" title="Update"><span class="glyphicon glyphicon-pencil"></span></a>
+                                    <a href="javascript:;" ng-click="onDelete( order._id )" title="Delete"><span class="glyphicon glyphicon-trash"></span></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="row ui-sel-options">
+                        <div class="col-md-6">
+                            <div class="pull-left" ng-show="user.isAdmin()">
+                                <img src="/core/img/arrow_ltr.png" alt="" class="arrow-checks">
+                                <div class="btn-group" role="group" aria-label="Options">
+                                    <button class="btn btn-default btn-sm select-all" title="Select All"><i class="fa fa-check-square-o"></i></button>
+                                    <button class="btn btn-default btn-sm select-none" title="Deselect All"><i class="fa fa-square-o"></i></button>
+                                    <button class="btn btn-default btn-sm select-random" title="Invert Selection"><i class="fa fa-random"></i></button>
+                                </div>
+                            </div>
+                            <div class="pull-left" style="margin-left: 5px;" ng-show="user.isAdmin() && selected">
+                                <form class="form-inline">
+
+                                    <div class="input-group">
+                                        <select class="form-control input-sm" ng-model="salesrepId" style="min-width: 150px">
+                                            <option ng-repeat="salesrep in salesreps" value="{{salesrep._id}}">{{salesrep.name}}</option>
+                                        </select>
+                                        <span class="input-group-btn">
+											<button type="button" class="btn btn-success btn-sm" ng-click="assign()"><i class="fa fa-user"></i> Assign</button>
+										</span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                             <!-- Pagination -->
+                            <div class="text-center empty-pagination pull-right">
+                                <pagination total-items="pagination.total" ng-model="pagination.currentPage" max-size="0" ng-change="pagination.onPageChange()"
+                                items-per-page="pagination.limit" class="pagination-sm" boundary-links="false" first-text="&laquo;"
+                                last-text="&raquo;" previous-text="&#8249; Prev" next-text="Next &#8250;" rotate="false"></pagination>
+                            </div>
+                            <!-- /Pagination -->
+                            <div class="pagination-gotopage bottom pull-right">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon aolabel text-smaller" id="sizing-addon3">Page:</span>
+                                    <input class="form-control input-sm pageno" ng-model="pagination.currentPage" value="" placeholder="#">
+                                    <span class="input-group-btn pull-left">
+										<button class="btn btn-default btn-sm" type="button" ng-click="GotoPage()">Go</button>
+									</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="col-md-12 text-right" style="margin-bottom: 10px;">
+                        <ul class="list-unstyled list-inline text-smaller" style="margin-top: 11px;">
+                            <li> <span class="fa fa-question-circle text-warning text-highlight"></span> Price Unavailable</li>
+                            <li ng-show="user.isAdmin()"> <span class="fa fa-user-md text-greenish"></span> Sales Rep (Assigned)</li>
+                            <li ng-show="user.isAdmin()"> <span class="fa fa-user-md text-muted"></span> Sales Rep (Unassigned)</li>
+                            <li> <span class="fa fa-sitemap text-greenish"></span> Source (Different)</li>
+                            <li> <span class="fa fa-sitemap text-muted"></span> Source (DD)</li>
+                            <li><span class="fa fa-cubes"></span> Package</li>
+                            <li><span class="text-danger fa fa-warning"></span> Date Passed</li>
+                            <li><span class="text-highlight fa fa-calendar-o" style="border: none"></span> Date Today</li>
+                            <li><span class="fa fa-calendar text-greenish"></span> Date Future </li>
+                            <li><span class="fa fa-calendar text-muted"></span> Date Usual</li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div ng-hide="progress || pagination.hasCount()" class="pagination-no-record">
+                    <div class="alert alert-warning alert-no-record" role="alert">
+                        No order found matching this search. Please change the search inputs and try again.
+                    </div>
+                </div>
+
+                <div ng-show="progress" class="pagination-no-record panel panel-default">
+                    <div class="panel-body"><i><i class="fa fa-refresh fa-spin"></i> &nbsp;Loading, please wait...</i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+<div class="tab-inner-space">
+	<h3>Manage Sales Reps</h3>
+	<br>
+	<div class="table-responsive data-table">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="row top-info-panel">
+					<div>
+						<div class="col-md-7">
+							<div class="pull-left" style="margin-right: 5px;"><a class="btn btn-primary btn-sm" href="salesreps/create"><i class="fa fa-plus-square"></i>&nbsp; Create</a></div>
+							<div class="input-group input-group-sm search-group pull-left">
+								<span class="input-group-addon" id="sizing-addon1"><i class="fa fa-search-plus"></i></span>
+								<input type="text" class="form-control" ng-model="search.$" placeholder="Search" aria-describedby="sizing-addon1">
+							</div>
+						</div>
+						<div class="col-md-5 pagination-info">Displaying {{salesreps.length}} of {{salesreps.length}} result{{salesreps.length > 1 ? 's' : ''}}.</div>
+					</div>
+					<br><br>
+					<div class="container-fluid">
+						<div class="btn-group btn-group-justified" role="group">
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" ng-class="{ 'btn-primary': type == 'staff' }" ng-click="loadReps('staff')">Staff</button>
+							</div>
+							<div class="btn-group" role="group">
+								<button type="button" class="btn btn-default" ng-class="{ 'btn-primary': type == 'agent' }" ng-click="loadReps('agent')">Agents</button>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<div class="table-responsive" ng-show="salesreps.length">
+					<table class="table table-bordered table-striped table-hover listing-table">
+						<thead>
+							<tr>
+								<!-- <th></th> -->
+								<th>#</th>
+								<th class="sort-attribute">
+									<div class="pull-left" style="padding:8px">
+										<i class="fa fa-user"></i>&nbsp;Name
+									</div>
+
+									<div class="pull-left" style="padding:8px">
+										<i class="fa fa-envelope-o"></i>&nbsp;Email
+									</div>
+
+									<div class="pull-left" style="padding:8px">
+										<i class="fa fa-phone"></i>&nbsp;Phone
+									</div>
+								</th>
+								<th><i class="fa fa-wrench"></i>&nbsp;Slots</th>
+								<th><i class="fa fa-calendar"></i>&nbsp;Created on</th>
+								<th><i class="fa fa-info-circle"></i>&nbsp;Status</th>
+								<th ng-show="user.isAdmin()">&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="salesrep in salesreps">
+								<!-- <td><input type="checkbox"></td> -->
+								<td><a href="salesreps/view/{{salesrep._id}}/{{pageNo}}" ng-click="save()">{{salesrep._id}}</a></td>
+								<td>
+									<ul class="list-unstyled">
+										<li><span class="fa fa-user text-muted"></span> {{salesrep.name| propercase}}</li>
+										<li><span class="fa fa-envelope-o text-muted"></span> <a href="mailto:{{salesrep.email| lowercase}}">{{salesrep.email| lowercase}}</a></li>
+										<li><span class="fa fa-phone text-muted"></span> <a href="tel:{{salesrep.phone| propercase}}">{{salesrep.phone| tel}}</a></li>
+									</ul>
+								</td>
+
+								<td class="text-danger">{{salesrep.slots}}</td>
+								<td>{{salesrep.created| date:'MMM d, yyyy h:mm a'}}</td>
+								<td>
+									<span ng-show="salesrep.enabled" class="label label-success">Active</span>
+									<span ng-hide="salesrep.enabled" class="label label-default">Inactive</span>
+								</td>
+								<td class="text-center pagination-crud-icons" ng-show="user.isRole(['admin', 'salesrep'])">
+									<a href="salesreps/view/{{salesrep._id}}//{{pageNo}}" title="View Details"><span class="glyphicon glyphicon-search"></span></a>
+									<a href="salesreps/edit/{{salesrep._id}}" title="Update"><span class="glyphicon glyphicon-pencil"></span></a>
+									<a href="javascript:;" ng-click="onDelete(salesrep._id)" title="Delete"><span class="glyphicon glyphicon-trash"></span></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+
+				<div ng-hide="salesreps.length" class="pagination-no-record">
+					<div class="alert alert-warning alert-no-record" role="alert">
+						No sales reps found
+					</div>
+				</div>
+
+				<div ng-show="progress" class="pagination-no-record panel panel-default">
+					<div class="panel-body"><i><i class="fa fa-refresh fa-spin"></i> Loading, please wait...</i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>UI.dataSearch();</script>

@@ -1,0 +1,59 @@
+<style>
+	.contn { display: table-cell;
+			 vertical-align: middle;
+			 height: 250px; }
+	</style>
+	<h4 style="margin: 20px 0">Welcome to Direct Dispatch Staff Portal</h4>
+<div class="row">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><strong>{{leads.total}} New Leads</strong></h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<canvas id="leadsChart"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><strong>{{orders.total}} New Orders</strong></h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<canvas id="ordersChart"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6" ng-show="userRole == 'admin'">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><strong>{{carriers.total}} New Carriers</strong></h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<canvas id="carriersChart"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><strong>{{dealers.total}} New Dealers</strong></h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<canvas id="dealersChart"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

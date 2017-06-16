@@ -1,0 +1,634 @@
+<style scoped>
+    .notes {
+        margin-top: 25px;
+        margin-bottom: 50px;
+    }
+    
+    .notes table {
+        margin-top: 10px;
+    }
+    
+    .top-15 {
+        margin-top: 15px;
+    }
+    
+    .status-box.label {
+        font-size: 16px;
+        margin-right: 15px;
+        font-weight: normal;
+        padding-top: 6px;
+    }
+    
+    .pricx {
+        margin-bottom: 15px;
+    }
+    
+    h3.heading-page {
+        position: relative
+    }
+    
+    .created-date {
+        float: right;
+        position: relative;
+        right: 10px;
+        top: 7px;
+    }
+    
+    @media(min-width:1170px) {
+        .status-box {
+            position: relative;
+            right: 10px;
+        }
+    }
+    
+    @media(max-width:992px) {
+        .pricx {
+            margin-bottom: 35px;
+        }
+    }
+    
+    .text-bigger {
+        font-size: 15px !important;
+    }
+    
+    .note-grouop-options {
+        margin-top: 10px;
+    }
+    
+    .del-note-opt {
+        margin-top: 3px;
+        padding: 8px;
+        background-color: #fcf8e3;
+        border: 1px solid #faebcc;
+        color: #8a6d3b;
+        border-radius: 4px;
+        text-align: center
+    }
+    
+    .del-note-opt .confirm-msg {
+        padding-top: 5px;
+        margin-right: 5px;
+    }
+    
+    .del-note-opt .note-grouop-options {
+        margin-top: 0px;
+    }
+    
+    .text-smaller.label.label-default {
+        position: relative;
+        top: -5px;
+        font-weight: normal;
+        background-color: #999;
+        display: inline-block;
+        margin-left: 50px;
+        padding-top: 3px;
+    }
+</style>
+
+<ol class="breadcrumb optimized">
+    <li><a href="dashboard">Home</a></li>
+    <li><a href="orders/{{pageNo}}">Orders</a></li>
+    <li class="active">View Details</li>
+</ol>
+<h3 class="heading-page">
+	<a href="orders"><span class="fa fa-arrow-circle-left"></span></a> Order # {{order._id}} <span ng-show="progress">
+		<i class="fa fa-refresh fa-spin"></i>
+	</span>
+	<span class="created-date text-muted text-smaller"> <span class="fa fa-calendar-o"></span> {{order.created| date:'EEEE, MMMM d, yyyy h:mm a'}}</span>
+
+</h3>
+<hr>
+<div role="tabpanel">
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" ng-class="{ active: currentPage == 'details' }"><a href="#" ng-click="showDetails($event)"><i class="fa fa-info"></i> Details</a></li>
+        <li role="presentation" ng-class="{ active: currentPage == 'notes' }"><a href="#" ng-click="showNotes($event)"><i class="fa fa-file-text-o"></i> Internal Notes</a></li>
+        <li ng-show="user.isAdmin()" role="presentation" ng-class="{ active: currentPage == 'payments' }"><a href="#" ng-click="showPayments($event)"><i class="fa fa-usd"></i> Payments</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div ng-class="{'active': currentPage == 'details'}" role="tabpanel" class="tab-pane">
+            <div class="row">
+                <div class="col-md-6 vertical-padding">
+                    <h4><span class="fa fa-chevron-right"></span> Shipper Information</h4>
+                    <table class="table table-bordered table-condensed">
+                        <tr>
+                            <td><strong>Contact</strong></td>
+                            <td> <span class="fa fa-user"></span> {{order.shipper.name| propercase}} &nbsp; <span class="fa fa-phone"></span> <a href="tel:{{order.shipper.phone}}">{{order.shipper.phone| tel}}</a></td>
+                        </tr>
+                        <tr ng-show="order.shipper.type == 'Business'">
+                            <td><strong>Company</strong></td>
+                            <td>{{order.shipper.company}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email</strong></td>
+                            <td><a href="mailto:{{order.shipper.email| lowercase}}">{{order.shipper.email| lowercase}}</a></td>
+                        </tr>
+                    </table>
+                    <h4> <span class="fa fa-chevron-right"></span> Pickup Location &amp; Contact</h4>
+                    <table class="table table-bordered table-condensed">
+                        <tr ng-show="order.pickup.addressType == 'Business'">
+                            <td><strong>Company</strong></td>
+                            <td>{{order.pickup.company}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Address</strong></td>
+                            <td>{{order.pickup.address}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Location</strong></td>
+                            <td>
+                                <location container="order.pickup.location"></location>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pickup Dates</strong></td>
+                            <td><span ng-repeat="date in order.pickup.dates.split(', ')">{{date | date:'MMMM d, yyyy'}}<br><span></td>
+                        </tr>
+                        <tr ng-show="order.pickup.fromAuction">
+                            <td><strong>Buyer Number</strong></td>
+                            <td>{{order.pickup.buyerNumber}}</td>
+                        </tr>
+                        <tr ng-show="order.pickup.contactType == 'Me'">
+                            <td><strong>Contact</strong></td>
+                            <td> <span class="fa fa-user"></span> {{order.shipper.name| propercase}} &nbsp; <span class="fa fa-phone"></span>                                <a href="tel:{{order.shipper.phone}}">{{order.shipper.phone| tel}}</a></td>
+                        </tr>
+
+                        <tr ng-show="order.pickup.contactType == 'Other'">
+                            <td><strong>Contact</strong></td>
+                            <td> <span class="fa fa-user"></span> {{order.pickup.name| propercase}} &nbsp; <span class="fa fa-phone"></span>                                <a href="tel:{{order.pickup.phone}}">{{order.pickup.phone| tel}}</a></td>
+                        </tr>
+                    </table>
+                    <h4><span class="fa fa-chevron-right"></span> Delivery Location &amp; Contact</h4>
+                    <table class="table table-bordered table-condensed">
+                        <tr ng-show="order.delivery.addressType == 'Business'">
+                            <td><strong>Company</strong></td>
+                            <td>{{order.delivery.company}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Address</strong></td>
+                            <td>{{order.delivery.address}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Location</strong></td>
+                            <td>
+                                <location container="order.delivery.location"></location>
+                            </td>
+                        </tr>
+
+                        <tr ng-show="order.delivery.contactType == 'Me'">
+                            <td><strong>Contact</strong></td>
+                            <td> <span class="fa fa-user"></span> {{order.shipper.name| propercase}} &nbsp; <span class="fa fa-phone"></span>                                <a href="tel:{{order.shipper.phone}}">{{order.shipper.phone| tel}}</a></td>
+                        </tr>
+
+                        <tr ng-show="order.delivery.contactType == 'Other'">
+                            <td><strong>Contact</strong></td>
+                            <td> <span class="fa fa-user"></span> {{order.delivery.name| propercase}} &nbsp; <span class="fa fa-phone"></span>                                <a href="tel:{{order.delivery.phone}}">{{order.delivery.phone| tel}}</a></td>
+                        </tr>
+                    </table>
+
+                    <h4><span class="fa fa-chevron-right"></span> Shipment Details</h4>
+                    <table class="table table-bordered table-condensed">
+                        <tr>
+                            <td><strong>Carrier Type</strong></td>
+                            <td>{{order.shipment.carrierType}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Method</strong></td>
+                            <td>{{order.shipment.paymentMethod}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Package</strong></td>
+                            <td>{{order.package}}<span class="required"></span></td>
+                        </tr>
+                        <tr ng-show="order.shipment.notes">
+                            <td><strong>Notes</strong></td>
+                            <td>{{order.shipment.notes}}</td>
+                        </tr>
+                    </table>
+
+                    <h4><span class="fa fa-chevron-right"></span> Vehicles Information</h4>
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Make/Model</th>
+                                <th>Type</th>
+                                <th>Condition</th>
+                                <th ng-show="hasAuction">VIN</th>
+                                <th ng-show="hasAuction">LOT#</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="vehicle in order.vehicles">
+                                <td>{{$index + 1}}</td>
+                                <td>
+                                    <vehicle data="vehicle"></vehicle>
+                                </td>
+                                <td>{{vehicle.type}}</td>
+                                <td>{{vehicle.condition}}</td>
+                                <td ng-show="hasAuction">{{vehicle.vin}}</td>
+                                <td ng-show="hasAuction">{{vehicle.lot}}</td>
+                                <td>
+                                    <span>${{ ddPricing.getVehiclePrice(vehicle) | number}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4><span class="fa fa-chevron-right"></span> Extra Information</h4>
+                    <table class="table table-bordered table-condensed">
+                        <tr>
+                            <td><strong>Source</strong></td>
+                            <td>{{order.source || "direct-dispatch.com" }}</td>
+                        </tr>
+                        <tr ng-if="order.marketing && (lead.marketing.sid || lead.marketing.cid)">
+                            <td><strong>Marketing Meta</strong></td>
+                            <td>Source ID = {{order.marketing.sid}}, Campaign ID = {{order.marketing.cid}}</td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="col-md-6 vertical-padding">
+
+                    <div class="row pricx">
+                        <div class="col-md-7">
+                            <h3 ng-if="order" style="margin-top: 10px;" class="heading-page">Amount: <strong class="text-danger">${{ ddPricing.getTotalPrice(order.vehicles, order.packagePrice) | number}}</strong>  <span class="text-smaller text-muted label label-default">Distance: {{order.distance| number}} miles</span></h3> </div>
+                        <div class="col-md-5" style="position: relative;">
+                            <h4 style="margin-right: 24px;" class="pull-right status-box label label-danger box-status-{{order.status}}"> Status: {{order.status}}</h4>
+                        </div>
+                    </div>
+                    <div>
+                        <a class="iframe cboxElement" href="https://www.google.com/maps/embed/v1/directions?origin={{ploc}}&destination={{dloc}}&key=AIzaSyCfN2a6GaYXyfRiHos7S_4Pv9KnJlYns-A"><img class="img-responsive img-thumbnail" ng-src="{{order.mapUrl}}"></a>
+                    </div>
+
+                    <br>
+                    <div class="" style="margin-left: 0px;">
+                        <div class="pull-left">
+                            <div class="btn-group" role="group" aria-label="...">
+                                <button type="button" ng-disabled="progress" class="btn btn-success" go-click="orders/edit/{{order._id}}/details"> <span class="fa fa-pencil"></span> Edit</button>
+                                <button ng-show="user.isAdmin() && order.status == 'Dispatched' && pickupDatePassed" type="button" ng-disabled="progress" class="btn btn-default" ng-click="pickupOrder(order._id)"> <span class="fa fa-arrow-up"></span> Pickup</button>
+                                <button ng-show="user.isAdmin() && order.status == 'Pickedup'" type="button" ng-disabled="progress" class="btn btn-default" ng-click="deliverOrder(order._id)"> <span class="fa fa-check"></span> Deliver</button>
+                                <button ng-disabled="progress" ng-show="user.isRole(['admin']) && order.status == 'Dispatched'" type="button" class="btn btn-default"
+                                ng-click="unDispatch(order._id)"><i class="fa fa-undo"></i> Undispatch</button>
+
+                                <div class="btn-group" role="group">
+                                    <button ng-disabled="progress" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa fa-envelope-o"></i> Email
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a href="#" ng-click="emailSubmitted($event)"> <span class="glyphicon glyphicon-ok-sign"></span> Submitted</a>
+                                        </li>
+                                        <li>
+                                            <a href="#"> <span class="fa fa-times-circle"></span> Canceled</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <div class="btn-group" style="padding-right: 25px" role="group" aria-label="...">
+                                <button ng-disabled="progress" class="btn btn-warning" type="button" ng-click="cancelOrder()" ng-show="order.status == 'Pending' || order.status == 'Dispatched'"><i class="fa fa-ban"></i> Cancel</button>
+                                <button ng-disabled="progress" class="btn btn-danger" type="button" ng-click="deleteOrder()"> <span class="fa fa-trash"></span> Delete</button>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div style="margin-top: 10px">
+                            <span ng-show="progress">
+                                <i class="fa fa-refresh fa-spin"></i>
+                            </span>
+                            <div ng-show="error">
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>{{error}}</div>
+                            </div>
+                            <div ng-show="success">
+                                <div class="alert alert-success alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>{{success}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="order.carrier">
+                        <hr>
+                        <h4><span class="fa fa-chevron-right"></span> Carrier Information</h4>
+                        <table class="table table-bordered table-condensed">
+                            <tr>
+                            </tr>
+                            <tr>
+                                <td><strong>Contact</strong></td>
+                                <td> <span class="fa fa-user"></span> {{order.carrier.name| propercase}} &nbsp; <span class="fa fa-phone"></span>                                    <a href="tel:{{order.carrier.phone}}">{{order.carrier.phone| tel}}</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td><a href="mailto:{{order.carrier.email| lowercase }}">{{order.carrier.email| lowercase }}</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Company</strong></td>
+                                <td>{{order.carrier.company}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pickup Date</strong></td>
+                                <td>{{order.carrier.pickupDate | date:'EEEE, MMMM d, yyyy'}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Estimated Delivery Date</strong></td>
+                                <td>{{order.carrier.deliveryDate | date:'EEEE, MMMM d, yyyy'}}</td>
+                            </tr>
+                        </table>
+                        <a href="carriers/view/{{order.carrier._id}}" class="btn btn-default btn-sm"> <span class="fa fa-search"></span> View Carrier Details</a>
+                    </div>
+
+                    <div ng-show="order.dealer">
+                        <hr>
+                        <h4><span class="fa fa-chevron-right"></span> Dealer Information</h4>
+                        <table class="table table-bordered table-condensed">
+                            <tr>
+                            </tr>
+                            <tr>
+                                <td><strong>Company</strong></td>
+                                <td>{{order.dealer.company}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Contact</strong></td>
+                                <td> <span class="fa fa-user"></span> {{order.dealer.name| propercase}} &nbsp; <span class="fa fa-phone"></span> <a href="tel:{{order.dealer.phone}}">{{order.dealer.phone| tel}}</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td><a href="mailto:{{order.dealer.email| lowercase }}">{{order.dealer.email| lowercase }}</a></td>
+                            </tr>
+                        </table>
+                        <a href="dealers/view/{{order.dealer._id}}" class="btn btn-default btn-sm"> <span class="fa fa-search"></span> View Dealer Details</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <!-- /details -->
+
+        <div ng-class="{'active': currentPage == 'notes'}" role="tabpanel" class="tab-pane row">
+            <div style="margin-top: 15px;" class="col-md-offset-1 col-md-10">
+                <div class="add-notes">
+                    <form role="form" ng-submit="addNote()">
+                        <textarea class="form-control noteText placeholder-dim" ng-model="noteText" id="noteText" placeholder="Write a note..."></textarea>
+                        <div class="note-options">
+                            <button type="submit" ng-disabled="!noteText.length" class="btn btn-sm btn-success"> Add Note</button>
+                        </div>
+                    </form>
+                </div>
+                <div ng-show="order.notes.length">
+                    <h4 style="margin-top: 50px;"> <span class="fa fa-clipboard"></span> Current Notes</h4>
+                    <hr>
+                    <div style="margin-top: 10px">
+
+                        <div class="timeline-centered">
+
+                            <article ng-mouseenter="showCtrls = true" ng-mouseleave="showCtrls = false; delete = false" class="timeline-entry" ng-repeat="note in order.notes| orderBy:'created':'true'"
+                            ng-class="{'animated rubberBand' : noteSaved && saveNoteIndex === $index, 'animated zoomInDown':noteIndex === $index, 'animated zoomOutDown': delNoteIndex === $index, 'animated shake': saveNoteIndex == $index }">
+
+                                <div class="timeline-entry-inner">
+
+                                    <div class="timeline-icon bg-success" ng-class="{'bg-warning animated bounce shake text-blur':delete}">
+                                        <i class="entypo-feather"></i>
+                                    </div>
+
+                                    <div class="timeline-label">
+
+
+                                        <div class="col-md-9" ng-class="{'text-blur':delete}">
+                                            <p class="text-black text-bigger">
+                                                <span title="Double click to edit Note" inline-edit-callback="saveUpdateNote(newValue, note, $index)" inline-edit="note.contents"
+                                                inline-edit-validation="validateNote(newValue, $index)" inline-edit-placeholder="Add note..."
+                                                inline-edit-btn-edit="" inline-edit-on-save="save" inline-edit-on-click></span>
+                                            </p>
+                                            <h6> <span class="text-muted"><span class="fa fa-calendar-o"></span> {{note.created| date:'EEEE, MMMM d, yyyy h:mm a'}}</span></h6>
+                                        </div>
+
+                                        <div class="col-md-3" ng-show="showCtrls">
+                                            <div class="pull-right btn-group note-grouop-options" ng-hide="delete" role="group" aria-label="...">
+                                                <button type="button" class="btn btn-danger" ng-click="delete = true"><i class="fa fa-trash"></i></button>
+                                            </div>
+
+                                            <div ng-show="delete" class="del-note-opt">
+                                                <div class="confirm-msg pull-left">Delete this note? </div>
+
+                                                <div class="btn-group pull-right btn-group-sm note-grouop-options" role="group" aria-label="...">
+                                                    <button type="button" class="btn btn-warning" ng-click="deleteNote(note, $index)"> <span class="glyphicon glyphicon-ok-sign"></span> </button>
+                                                    <button type="button" class="btn btn-default" ng-click="delete = false"><i class="fa fa-ban"></i></button>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+
+                            </article>
+
+
+
+                            <article class="timeline-entry begin">
+
+                                <div class="timeline-entry-inner">
+
+                                    <div class="timeline-icon" style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg);">
+                                        <i class="entypo-flight"></i> +
+                                    </div>
+
+                                </div>
+
+                            </article>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /notes -->
+
+        <!-- payments -->
+        <div ng-show="user.isAdmin()" ng-class="{'active': currentPage == 'payments'}" role="tabpanel" class="tab-pane" style="max-width: 800px">
+            <br>
+            <div class="panel panel-default" ng-show="order.shipperAuthorization">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Shipper Authorization</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Transaction ID</th>
+                                <th>Date Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-show="order.shipperAuthorization">
+                                <th scope="row"><i class="fa fa-arrow-right"></i></th>
+                                <td>Authorized</td>
+                                <td>${{order.shipperAuthorization.amount}}</td>
+                                <td>{{order.shipperAuthorization.transId}}</td>
+                                <td>{{order.shipperAuthorization.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.shipperAuthorizationReleased">
+                                <th scope="row"><i class="fa fa-arrow-left"></i></th>
+                                <td>Released</td>
+                                <td>${{order.shipperAuthorizationReleased.amount}}</td>
+                                <td>{{order.shipperAuthorizationReleased.transId}}</td>
+                                <td>{{order.shipperAuthorizationReleased.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.shipperAuthorizationCaptured">
+                                <th scope="row"><i class="fa fa-check"></i></th>
+                                <td>Captured</td>
+                                <td>${{order.shipperAuthorizationCaptured.amount}}</td>
+                                <td>{{order.shipperAuthorizationCaptured.transId}}</td>
+                                <td>{{order.shipperAuthorizationCaptured.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default" ng-show="order.shipperFeeAuthorized">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Shipper Fee</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Transaction ID</th>
+                                <th>Date Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-show="order.shipperFeeAuthorized">
+                                <th scope="row"><i class="fa fa-arrow-right"></i></th>
+                                <td>Authorized</td>
+                                <td>${{order.shipperFeeAuthorized.amount}}</td>
+                                <td>{{order.shipperFeeAuthorized.transId}}</td>
+                                <td>{{order.shipperFeeAuthorized.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.shipperFeeCaptured">
+                                <th scope="row"><i class="fa fa-check"></i></th>
+                                <td>Captured</td>
+                                <td>${{order.shipperFeeCaptured.amount}}</td>
+                                <td>{{order.shipperFeeCaptured.transId}}</td>
+                                <td>{{order.shipperFeeCaptured.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.shipperFeeReleased">
+                                <th scope="row"><i class="fa fa-arrow-left"></i></th>
+                                <td>Released</td>
+                                <td>${{order.shipperFeeReleased.amount}}</td>
+                                <td>{{order.shipperFeeReleased.transId}}</td>
+                                <td>{{order.shipperFeeReleased.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default" ng-show="order.carrierFeeAuthorized">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Carrier Fee</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Transaction ID</th>
+                                <th>Date Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-show="order.carrierFeeAuthorized">
+                                <th scope="row"><i class="fa fa-arrow-right"></i></th>
+                                <td>Authorized</td>
+                                <td>${{order.carrierFeeAuthorized.amount}}</td>
+                                <td>{{order.carrierFeeAuthorized.transId}}</td>
+                                <td>{{order.carrierFeeAuthorized.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.carrierFeeCaptured">
+                                <th scope="row"><i class="fa fa-check"></i></th>
+                                <td>Captured</td>
+                                <td>${{order.carrierFeeCaptured.amount}}</td>
+                                <td>{{order.carrierFeeCaptured.transId}}</td>
+                                <td>{{order.carrierFeeCaptured.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.carrierFeeReleased">
+                                <th scope="row"><i class="fa fa-arrow-left"></i></th>
+                                <td>Released</td>
+                                <td>${{order.carrierFeeReleased.amount}}</td>
+                                <td>{{order.carrierFeeReleased.transId}}</td>
+                                <td>{{order.carrierFeeReleased.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel panel-default" ng-show="order.totalFeeAuthorized">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Total Fee</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Transaction ID</th>
+                                <th>Date Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-show="order.totalFeeAuthorized">
+                                <th scope="row"><i class="fa fa-arrow-right"></i></th>
+                                <td>Authorized</td>
+                                <td>${{order.totalFeeAuthorized.amount}}</td>
+                                <td>{{order.totalFeeAuthorized.transId}}</td>
+                                <td>{{order.totalFeeAuthorized.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.totalFeeCaptured">
+                                <th scope="row"><i class="fa fa-check"></i></th>
+                                <td>Captured</td>
+                                <td>${{order.totalFeeCaptured.amount}}</td>
+                                <td>{{order.totalFeeCaptured.transId}}</td>
+                                <td>{{order.totalFeeCaptured.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                            <tr ng-show="order.totalFeeReleased">
+                                <th scope="row"><i class="fa fa-arrow-left"></i></th>
+                                <td>Released</td>
+                                <td>${{order.totalFeeReleased.amount}}</td>
+                                <td>{{order.totalFeeReleased.transId}}</td>
+                                <td>{{order.totalFeeReleased.datetime | date:'EEEE, MMMM d, yyyy h:mm a'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <!-- /payments -->
+
+    </div>
+</div>
+<script>
+    $(".iframe").colorbox({iframe: true, width: "80%", height: "80%"});
+
+</script>

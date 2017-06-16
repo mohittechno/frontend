@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-us" ng-app="dd.staff">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Direct Dispatch Staff</title>
+		<base href="/staff/">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- Libraries -->
+		<script src="/core/bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="/core/bower_components/lodash/dist/lodash.min.js"></script>
+		<link href="/core/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+		<link href="/core/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+		<script src="/core/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="/core/bower_components/angular/angular.min.js"></script>
+		<script src="/core/bower_components/angular-route/angular-route.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/core/bower_components/angular-animate.css/angular-animate.min.css" />
+		<script src="/core/bower_components/angular-animate/angular-animate.min.js" type="text/javascript"></script>
+		<link href="/core/bower_components/select2/dist/css/select2.min.css" rel="stylesheet">
+	    <script src="/core/bower_components/select2/dist/js/select2.min.js"></script>
+		<script src="/core/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+		<link href="/core/bower_components/angular-ui-select/dist/select.min.css" rel="stylesheet">
+    	<script src="/core/bower_components/angular-ui-select/dist/select.min.js"></script>
+		<link href="/core/ui-select-fix.css" rel="stylesheet">
+    	<script src="/core/ui-select-open-on.js"></script>
+		<link href="/core/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css" rel="stylesheet">
+	    <script src="/core/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script> 
+		<script src="/core/bower_components/moment/min/moment.min.js" type="text/javascript"></script>
+		<script src="/core/bower_components/angular-momentjs/angular-momentjs.js"></script>       
+		<script src="/core/bower_components/Chart.js/dist/Chart.min.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfN2a6GaYXyfRiHos7S_4Pv9KnJlYns-A"></script>
+		<!-- Components -->
+		
+		<link href="/core/bower_components/chosen/chosen.min.css" rel="stylesheet" type="text/css"/>
+		<script src="/core/bower_components/chosen/chosen.jquery.js" type="text/javascript"></script>
+		<link href="/core/bower_components/angular-chosen-localytics/chosen-spinner.css" rel="stylesheet" type="text/css"/>
+		<script src="/core/bower_components/angular-chosen-localytics/chosen.js" type="text/javascript"></script>
+		
+		<script src="/core/bower_components/angular-mask/dist/ngMask.min.js" type="text/javascript"></script>
+
+
+
+
+		<!--bcjkdbncijvdfhjfiojerfdfjkjkdhiuhji-->
+        <script src="/core/bower_components/angular-file-upload/dist/angular-file-upload.min.js" type="text/javascript"></script>
+		<script src="/core/bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+		<script src="/core/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+		<link href='https://fonts.googleapis.com/css?family=Crete+Round|Roboto+Slab' rel='stylesheet' type='text/css'>
+		<!-- Notify -->
+		<link rel="stylesheet" href="/core/bower_components/pnotify/pnotify.core.css">
+		<link rel="stylesheet" href="/core/bower_components/pnotify/pnotify.buttons.css">
+		<script src="/core/bower_components/pnotify/pnotify.core.js"></script>
+		<script src="/core/bower_components/pnotify/pnotify.confirm.js"></script>
+		<script src="/core/bower_components/pnotify/pnotify.buttons.js"></script>
+		<script src="/core/bower_components/angular-pnotify/src/angular-pnotify.js"></script>
+		<!-- /Notify -->
+		<link href="/core/bower_components/jquery-colorbox/example2/colorbox.css" rel="stylesheet" type="text/css"/>
+		<script src="/core/bower_components/jquery-colorbox/jquery.colorbox-min.js" type="text/javascript"></script>
+
+		<link rel="stylesheet" type="text/css" href="/core/bower_components/animate.css/animate.min.css" />
+	
+        
+        <link href="/core/bower_components/ng-inline-edit/dist/ng-inline-edit.min.css" rel="stylesheet" type="text/css"/>
+		<script src="/core/bower_components/ng-inline-edit/dist/ng-inline-edit.min.js" type="text/javascript"></script>
+
+		<link href="/core/bower_components/angular-toasty/dist/angular-toasty.min.css" rel="stylesheet" type="text/css"/>
+	    <script src="/core/bower_components/angular-toasty/dist/angular-toasty.min.js" type="text/javascript"></script>
+
+        <link href="/core/ui-app-resource/css/common-ui.css" rel="stylesheet" type="text/css"/>
+		<link href="/core/ui-app-resource/css/in-apps.css" rel="stylesheet">
+		<link href="css/common.css" rel="stylesheet">
+		<script src="/core/ng-common.js"></script>
+		<script src="/core/select2-directive.js"></script>
+		<script src="/core/dd-city-picker.js"></script>
+		<script src="/core/dd-vehicle-picker.js"></script>
+		<script src="/core/dd-vehicle-type-picker.js"></script>
+		<script src="/core/dd-pricing.js"></script>
+		<script src="/core/date-picker.js"></script>
+		<script src="/core/ui-app-resource/js/up-script.js" type="text/javascript"></script>
+		<script src="/core/ui-app.js" type="text/javascript"></script>
+		<link href="css/staff.css" rel="stylesheet">
+		<script src="js/staff.js"></script>
+		<script src="js/config.js"></script>
+        
+	</head>
+	<body ng-class="!loginUser ? 'aguest' : 'auser'">
+        <!-- detect outdated browser script -->
+        <script> 
+            var $buoop = {c:2}; 
+            function $buo_f(){ 
+            var e = document.createElement("script"); 
+            e.src = "//browser-update.org/update.min.js"; 
+            document.body.appendChild(e);
+            };
+            try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
+            catch(e){window.attachEvent("onload", $buo_f)}
+        </script>
+        <!-- // detect outdated browser script -->
+
+		<!-- Header -->
+		<div id="home" class="container-fluid header" ng-hide="loginUser">
+			<a href="/"><img src="img/logo.png" title="Goto Home Page" /></a>
+		</div>
+
+		<div class="navbar navbar-default" role="navigation" style="margin-bottom: 0;" ng-show="loginUser">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="dashboard" style="line-height: 50px; padding: 0 30px;"><span><img src="img/logo-symbol.png"> Direct Dispatch</span></a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li ng-class="{ active: currentNavSec == 'dashboard' }"><a href="dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+						<li ng-class="{ active: currentNavSec == 'leads' }"><a href="leads"><i class="fa fa-car"></i> Leads</a></li>
+						<li ng-class="{ active: currentNavSec == 'orders' }"><a href="orders"><i class="fa fa-shopping-cart"></i> Orders</a></li>
+						<li ng-class="{ active: currentNavSec == 'dealers' }"><a href="dealers"><i class="fa fa-car"></i> Dealers</a></li>
+						<li ng-show="user.isRole('admin')" ng-class="{ active: currentNavSec == 'carriers' }"><a href="carriers"><i class="fa fa-truck"></i> Carriers</a></li>						
+						<li ng-show="user.isRole('admin')" ng-class="{ active: currentNavSec == 'salesreps' }"><a href="salesreps"><i class="fa fa-user"></i> Sales Reps</a></li>
+						<li ng-show="user.isRole('admin')" ng-class="{ active: currentNavSec == 'reports' }"><a href="reports"><i class="fa fa-pie-chart"></i> Reports</a></li>
+						<li ng-show="user.isRole('admin')" ng-class="{ active: currentNavSec == 'trends' }"><a href="trends"><i class="fa fa-line-chart"></i> Trends</a></li>
+						<li ng-show="user.isRole('salesrep')" ng-class="{ active: currentNavSec == 'bonus' }"><a href="bonus"><i class="fa fa-dollar"></i> Bonus Points</a></li>
+						<li class="notifis no-new">
+							<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<span uib-tooltip="Notifications" tooltip-placement="bottom" class="fa fa-bell"></span>
+								<span ng-show="notif.countUnRead()" class="badge counter">{{notif.countUnRead()}}</span>
+								<span ng-hide="notif.countUnRead()">&nbsp;&nbsp;&nbsp;</span>
+							</a>
+
+							<ul class="dropdown-menu scrollable-menu" role="menu">
+								<li ng-click="notif.removeClick ($event)" role="presentation" class="dropdown-header">
+									<span class="lft">Notifications </span>
+									<span class="rgt"><i ng-show="progress" class="fa fa-refresh fa-spin"></i></span>
+									<span class="clearfix"></span>
+								</li>
+								<li class="empty-notification" ng-click="notif.removeClick ($event)" ng-show="!notificationsList.length">
+									<span class="edesc"> <span class="fa fa-warning text-danger"></span> No notification to show</span>
+								</li>
+								<li ng-repeat="n in notificationsList">
+									<a href="javascript:;" ng-click="notif.bindClick(n, $event)" class="item" ng-class="{'menu-highlight':!n.read}" ng-mouseenter="n.showCt = true" ng-mouseleave="n.showCt = false">
+										<span class="menu-icon pull-left"> <span class="{{notif.getIcon(n.type)}}" ng-class="{'text-muted':n.read}"></span> </span>
+										<span class="menu-meta pull-left">
+											<span class="menu-item-title"> <span class="fa fa-asterisk text-danger" ng-hide="n.read"></span> {{n.title}}</span>
+											<span class="menu-item-desc">{{n.contents}}</span>
+											<span class="menu-item-time"><span class="glyphicon glyphicon-time"></span>&nbsp;<span uib-tooltip="{{n.datetime| date:'MMM d, yyyy h:m a'}}">{{notif.getNowTime(n.datetime)}}</span>&nbsp;&nbsp;&nbsp;<span ng-class="{hide:!n.showCt}"><span ng-hide="n.read" uib-tooltip="Mark as Read" ng-click="notif.markAsRead(n.id, $event)" class="glyphicon glyphicon-ok-sign text-black"></span>&nbsp;<span ng-click="notif.removeThis(n.id, $event)" uib-tooltip="Remove Notification" class="glyphicon glyphicon-trash text-danger"></span></span></span>
+										</span>
+										<span class="clearfix"></span>
+									</a>
+								</li>
+								<li class="ddm-footer" ng-hide="!notificationsList.length"><a href="notifications">View All Notifications</a></li>
+							</ul>
+						</li>
+					</ul>
+					<div class="navbar-right">
+						<p class="navbar-text"> <span class="fa fa-user"></span> <strong>{{loginUser}}</strong></p>
+						<div class=" navbar-text" style="margin-left: 0px; margin-bottom: 0px;">
+							<!-- Single button -->
+							<div class="btn-group">
+								<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="ChangePassword"><i class="fa fa-sign-out"></i> Change Password</a></li>
+									<li><a href="signout"><i class="fa fa-sign-out"></i> Sign Out</a></li>
+									
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid main">
+			<div ng-view></div>
+		</div>
+
+		<div id="ajax-loader" style="display: none"><img src="/core/img/spinner-meter.gif"> <span>loading...</span></div>
+
+		<toasty></toasty>
+	</body>
+</html>

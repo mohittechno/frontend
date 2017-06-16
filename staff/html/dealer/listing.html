@@ -1,0 +1,146 @@
+<div class="tab-inner-space">
+	<h3>Manage Dealers</h3>
+	<br>
+	<div class="table-responsive data-table">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="row top-info-panel">
+					<form class="form-inline pagination-search">
+						<div class="col-md-8">
+							<div class="pull-left" style="margin-right: 5px;"><a class="btn btn-primary btn-sm" href="dealers/create"><i class="fa fa-plus-square"></i>&nbsp; Create</a></div>
+							<div class="input-group input-group-sm pull-left">
+								<span class="input-group-btn search-items">
+									<select ng-model="pagination.searchBy" id="page-searchBy" class="btn btn-default query-attrs" aria-describedby="sizing-addon2">
+										<option value="_id">#</option>
+										<option value="company">Company</option>
+										<option value="name">Name</option>
+										<option value="email">Email</option>
+										<option value="phone">Phone</option>
+										<option value="created">Registered on</option>
+									</select>
+								</span>
+								<input type="text" ng-enter="pagination.doSearch()" title="Press Enter key to Search" class="form-control input-group-btn"
+									ng-change="pagination.inputResetSearch()" ng-model="pagination.searchQuery" placeholder="Type keyword here..." aria-describedby="sizing-addon1">
+								<span class="input-group-btn search-items">
+									<button type="button" class="btn btn-success" ng-click="pagination.doSearch()"><i class="fa fa-search"></i> Search</button>
+
+								</span>
+							</div>
+							<div class="pull-left alert alert-warning pagination-clear-search" ng-show="pagination.isSearched()">
+								<span class="fa fa-info-circle"></span> Clear search by <a href="javascript:;" ng-click="pagination.resetSearch()">clicking here</a>.
+							</div>
+							<div class="pull-left pagination-loader" ng-show="pagination.loading">
+								<span><i class="fa fa-refresh fa-spin"></i></span>
+							</div>
+						</div>
+					</form>
+					<div class="col-md-4 pagination-info">
+						<div class="pull-right">
+							<select ng-change="pagination.onChange()" ng-model="pagination.limit" ng-options="size for size in pagination.pageSizeList"
+								id="pagination-limit" class="form-control input-sm item-per-page">
+                            </select>
+						</div>
+						<div class="pull-right pagination-top">
+							<pagination total-items="pagination.total" ng-model="pagination.currentPage" max-size="0" ng-change="pagination.onPageChange()"
+								items-per-page="pagination.limit" class="pagination-sm" boundary-links="false" first-text="&laquo;" last-text="&raquo;"
+								previous-text="&#8249; Prev" next-text="Next &#8250;" rotate="false"></pagination>
+						</div>
+						<div class="pull-right">{{pagination.getInfo()}}</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+
+				<div class="table-responsive" ng-show="pagination.hasCount()">
+					<table class="table table-bordered table-striped table-hover listing-table">
+						<thead>
+							<tr>
+								<th class="sort-attribute" ng-class="{'sort-highlight':pagination.hasSortBy( '_id' )}"><a href="javascript:;" ng-click="pagination.sortByAttr( $event, '_id' )">#</a>
+									<i ng-show="pagination.hasSortBy( '_id' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+								</th>
+								<th class="sort-attribute" ng-class="{'sort-highlight':pagination.hasSortBy( 'company' )}"><a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'company' )">Company</a>
+									<i ng-show="pagination.hasSortBy( 'company' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+								</th>
+								<th class="sort-attribute" ng-class="{'sort-highlight':pagination.hasSortBy( 'name' )}"><a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'name' )">Name</a>
+									<i ng-show="pagination.hasSortBy( 'name' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+								</th>
+								<th class="sort-attribute" ng-class="{'sort-highlight':pagination.hasSortBy( 'email' )}"><a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'email' )">Email</a>
+									<i ng-show="pagination.hasSortBy( 'email' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+								</th>
+								<th class="sort-attribute" ng-class="{'sort-highlight':pagination.hasSortBy( 'phone' )}"><a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'phone' )">Phone</a>
+									<i ng-show="pagination.hasSortBy( 'phone' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+								</th>
+								<th class="sort-attribute" ng-class="{'sort-highlight':pagination.hasSortBy( 'created' )}"><i class="fa fa-clock-o"></i>&nbsp;<a href="javascript:;" ng-click="pagination.sortByAttr( $event, 'created' )">Registered on</a>
+									<i ng-show="pagination.hasSortBy( 'created' )" class="fa fa-caret-{{pagination.isAsn() ? 'up' : 'down'}}"></i>
+								</th>
+								<th><i class="fa fa-info-circle"></i>&nbsp;Status</th>
+								<th> <span class="fa fa-puzzle-piece"></span> Info</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="dealer in dealers">
+								<td>{{dealer._id}}</td>
+								<!--<td><a href="dealers/view/{{dealer._id}}">{{dealer._id}}</a></td>-->
+								<td><span class="text-success">{{dealer.company}}</span></td>
+								<td><span class="text-success">{{dealer.name| propercase}}</span></td>
+								<td><span class="text-success"><a href="mailto:{{dealer.email| lowercase}}">{{dealer.email| lowercase}}</a></span></td>
+								<td><span class="text-success"><a href="tel:{{dealer.phone| propercase}}">{{dealer.phone| propercase}}</a></span></td>
+								<td>
+									<span uib-tooltip="{{dealer.created | date:'MMM d, yyyy h:mm a'}}">{{dealer.fromNow}}</span>
+								</td>
+								<td>
+									<span ng-show="dealer.activated" class="label label-success">Active</span>
+									<span ng-hide="dealer.activated" class="label label-default">Inactive</span>
+								</td>
+								<td>
+									<span ng-show="user.isAdmin()" tooltip-placement="top" uib-tooltip="{{dealer.salesrepName ? dealer.salesrepName : 'Unassigned'}}"><i class="fa fa-user-md" ng-class="{'text-muted':!dealer.salesrepName, 'text-greenish':dealer.salesrepName}" ></i></span>
+								</td>
+								<td class="text-center pagination-crud-icons">
+									<!--<a href="dealers/view/{{dealer._id}}" title="View Details"><span class="glyphicon glyphicon-search"></span></a>
+									<a href="javascript:;" ng-click="onDelete(dealer._id)" title="Delete"><span class="glyphicon glyphicon-trash"></span></a>-->
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="row ui-sel-options">
+						<div class="col-md-6">
+
+						</div>
+						<div class="col-md-6">
+							 <!-- Pagination -->
+                            <div class="text-center empty-pagination pull-right">
+                                <pagination total-items="pagination.total" ng-model="pagination.currentPage" max-size="0" ng-change="pagination.onPageChange()"
+                                items-per-page="pagination.limit" class="pagination-sm" boundary-links="false" first-text="&laquo;"
+                                last-text="&raquo;" previous-text="&#8249; Prev" next-text="Next &#8250;" rotate="false"></pagination>
+                            </div>
+                            <!-- /Pagination -->
+                            <div class="pagination-gotopage bottom pull-right">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon aolabel text-smaller" id="sizing-addon3">Page:</span>
+                                    <input class="form-control input-sm pageno" ng-model="pagination.currentPage" value="" placeholder="#">
+                                    <span class="input-group-btn pull-left">
+										<button class="btn btn-default btn-sm" type="button" ng-click="GotoPage()">Go</button>
+									</span>
+                                </div>
+                            </div>
+						</div>
+					</div>
+				</div>
+
+				<div ng-hide="progress || pagination.hasCount()" class="pagination-no-record">
+					<div class="alert alert-warning alert-no-record" role="alert">
+						No dealer found matching this search. Please change the search inputs and try again.
+					</div>
+				</div>
+
+				<div ng-show="progress" class="pagination-no-record panel panel-default">
+					<div class="panel-body"><i><i class="fa fa-refresh fa-spin"></i> &nbsp;Loading, please wait...</i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>UI.dataSearch();</script>

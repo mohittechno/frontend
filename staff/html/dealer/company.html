@@ -1,0 +1,178 @@
+<style>
+	.popover-content {
+		margin-left: 10px;
+	}
+
+	a.chosen-single, .chosen-default { height: 26px !important; }
+
+	.form-group.has-error .chosen-single.chosen-default  { border-color: #a94442 }
+
+</style>
+<ol class="breadcrumb optimized">
+	<li><a href="dashboard">Home</a></li>
+	<li><a href="carriers">Carriers</a></li>
+	<li class="active">View Details</li>
+</ol>
+
+<div style="margin-bottom: 15px;">
+	<a class="btn btn-default" href="carriers" style="display: inline-block"><i class="fa fa-arrow-left"></i> Back</a>&nbsp;&nbsp;
+	<h3 style="display: inline-block">Carrier # {{id}}</h3>
+</div>
+<ul class="nav nav-tabs">
+	<li role="presentation"><a href="carriers/view/{{id}}"><i class="fa fa-pie-chart"></i> Overview</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/user"><i class="fa fa-user"></i> User</a></li>
+	<li role="presentation" class="active"><a href="carriers/view/{{id}}/company"><i class="fa fa-copyright"></i> Company</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/docs"><i class="fa fa-file-text-o"></i> Documents</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/trucks"><i class="fa fa-truck"></i> Trucks</a></li>
+	<li role="presentation"><a href="carriers/view/{{id}}/billing"><i class="fa fa-credit-card"></i> Billing</a></li>
+</ul>
+<div class="row" style="margin-left: 0">
+	<div ng-show="mode == 'view'">
+		<table class="table table-bordered" style="margin-top: 20px;max-width: 700px;">
+			<tr>
+				<td><strong>Contact Name</strong></td>
+				<td>{{carrier.name}}</td>
+			</tr>
+			<tr>
+				<td><strong>Company</strong></td>
+				<td>{{carrier.company}}</td>
+			</tr>
+			<tr>
+				<td><strong>Address</strong></td>
+				<td>{{carrier.address}}</td>
+			</tr>
+			<tr>
+				<td><strong>City, State Zip</strong></td>
+				<td><location container="carrier.location"></location></td>
+			</tr>
+			<tr>
+				<td><strong>Phone</strong></td>
+				<td>{{carrier.phone| tel}}</td>
+			</tr>
+			<tr ng-show="carrier.website">
+				<td><strong>Website</strong></td>
+				<td>{{carrier.website}}</td>
+			</tr>
+			<tr>
+				<td><strong>MC#</strong></td>
+				<td>{{carrier.mc}}</td>
+			</tr>
+			<tr>
+				<td><strong>DOT#</strong></td>
+				<td>{{carrier.dot}}</td>
+			</tr>
+			<tr>
+				<td><strong>Insurance Expiration</strong></td>
+				<td>{{carrier.insuranceExpiration| date:'MMMM d, yyyy'}}</td>
+			</tr>
+		</table>
+		<button ng-click="mode = 'edit'" class="btn btn-default"><i class="fa fa-edit"></i> Edit</button>
+	</div>
+	<div ng-show="mode == 'edit'">
+		<br />
+		<form name="carrierForm" class="form-horizontal" role="form" novalidate ng-submit="carrierForm.$valid && save()" style="max-width: 600px;">
+			<fieldset ng-disabled="progress">
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.name.$invalid }">
+					<label for="name" class="col-sm-3 control-label">Contact Name</label>
+					<div class="col-sm-5">
+						<input name="name" id="name" type="text" class="form-control input-sm" ng-model="carrier.name" required ng-minlength="3" placeholder="Full Name" autofocus>
+						<span class="help-block" ng-show="submitted && carrierForm.name.$error.required">Name is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.name.$error.minlength">Name is too short</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.company.$invalid }">
+					<label for="company" class="col-sm-3 control-label">Company</label>
+					<div class="col-sm-6">
+						<input name="company" id="company" type="text" class="form-control input-sm" ng-model="carrier.company" required ng-minlength="3" placeholder="Company Name">
+						<span class="help-block" ng-show="submitted && carrierForm.company.$error.required">Company is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.company.$error.minlength">Company is too short</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.address.$invalid }">
+					<label for="address" class="col-sm-3 control-label">Address</label>
+					<div class="col-sm-8">
+						<input name="address" id="address" type="text" class="form-control input-sm" ng-model="carrier.address" required ng-minlength="5" placeholder="Street Address">
+						<span class="help-block" ng-show="submitted && carrierForm.address.$error.required">Address is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.address.$error.minlength">Address is too short</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && (carrierForm.locationState.$error.required || carrierForm.locationCity.$error.required || carrierForm.locationZip.$error.required) }">
+					<label class="col-sm-3 control-label">Origin <span class="required">*</span></label>
+					<div class="col-md-9" style="margin-top: 6px;">
+						<div class="row">
+							<div class="col-md-9">
+								<label class="pull-left">State <span class="required">*</span></label>											
+								<state-picker container="location" ng-model="carrier.location.state" name="locationState" required></state-picker>
+								<span class="help-block" ng-show="submitted && carrierForm.locationState.$error.required">Origin state is required</span>
+							</div>
+							<div class="col-md-3 locale findZip">
+								<zip-finder container="location" state="carrier.location.state" city="carrier.location.city" zip="carrier.location.zip"></zip-finder>
+							</div>
+						</div>
+						<div class="row" style="margin-top:10px;">
+							<div class="col-md-7">
+								<label class="pull-left">City <span class="required">*</span></label>
+								<city-picker container="location" state="carrier.location.state" name="locationCity" ng-model="carrier.location.city" required></city-picker>
+								<span class="help-block" ng-show="submitted && carrierForm.locationCity.$error.required">Origin city is required</span>
+							</div>
+							<div class="col-md-5">
+								<label class="pull-left">Zip <span class="required">*</span></label>											
+								<zip-picker container="location" ng-model="carrier.location.zip" name="locationZip" required></zip-picker>
+								<span class="help-block" ng-show="submitted && carrierForm.locationZip.$error.required">Origin zip is required</span>
+							</div>
+						</div>
+						<span class="help-block" ng-show="submitted && carrierForm.location.$error.required">Origin is required</span>
+					</div>
+				</div>
+
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.phone.$invalid }">
+					<label for="phone" class="col-sm-3 control-label">Phone</label>
+					<div class="col-sm-3">
+						<input name="phone" id="phone" type="text" class="form-control input-sm" ng-model="carrier.phone" required mask="(999) 999-9999" clean="true" placeholder="(###) ###-####">
+						<span class="help-block" ng-show="submitted && carrierForm.phone.$error.required">Phone is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.phone.$error.pattern">Phone is invalid</span>
+						<span class="help-block" ng-show="submitted && carrierForm.phone.$error.minlength">Phone is less than 10 digits</span>
+						<span class="help-block" ng-show="submitted && carrierForm.phone.$error.maxlength">Phone is more than 10 digits</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.website.$invalid }">
+					<label for="website" class="col-sm-3 control-label">Website</label>
+					<div class="col-sm-8">
+						<input name="website" id="website" type="url" class="form-control input-sm" ng-model="carrier.website" placeholder="Website (Optional)">
+						<span class="help-block" ng-show="submitted && carrierForm.website.$error.url">Website is invalid</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.mc.$invalid }">
+					<label for="mc" class="col-sm-3 control-label">MC#</label>
+					<div class="col-sm-4">
+						<input name="mc" id="mc" type="text" class="form-control input-sm" ng-model="carrier.mc" required ng-pattern="/^\d+$/" placeholder="MC Number">
+						<span class="help-block" ng-show="submitted && carrierForm.mc.$error.required">MC# is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.mc.$error.pattern">MC# is invalid</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.dot.$invalid }">
+					<label for="dot" class="col-sm-3 control-label">DOT#</label>
+					<div class="col-sm-4">
+						<input name="dot" id="dot" type="text" class="form-control input-sm" ng-model="carrier.dot" required ng-pattern="/^\d+$/" placeholder="DOT Number">
+						<span class="help-block" ng-show="submitted && carrierForm.dot.$error.required">DOT# is required</span>
+						<span class="help-block" ng-show="submitted && carrierForm.dot.$error.pattern">DOT# is invalid</span>
+					</div>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': submitted && carrierForm.insuranceExpiration.$invalid }">
+					<label for="insuranceExpiration" class="col-sm-3 control-label">Insurance Expiration</label>
+					<div class="col-sm-3">
+						<input name="insuranceExpiration" id="insuranceExpiration" type="text" class="form-control input-sm" ng-model="carrier.insuranceExpiration" date-picker="datePicker" required placeholder="Insurance Expiry Date">
+						<span class="help-block" ng-show="submitted && carrierForm.insuranceExpiration.$error.required">Insurance Expiration is required</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-3 col-sm-9">
+						<button ng-click="mode = 'view'" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back</button>&nbsp;&nbsp;&nbsp;<button class="btn btn-default" type="submit" ng-click="submitted = true"><i class="fa fa-save"></i> Save</button>
+					</div>
+				</div>
+			</fieldset>
+			<div class="alert alert-danger" ng-show="error">{{error}}</div>
+			<div ng-show="progress"><i class="fa fa-2x fa-spinner fa-spin"></i></div>
+		</form>
+	</div>
+</div>
